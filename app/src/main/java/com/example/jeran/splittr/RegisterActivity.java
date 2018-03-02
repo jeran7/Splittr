@@ -16,7 +16,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
+public class RegisterActivity extends AppCompatActivity implements View.OnClickListener{
 
 
 
@@ -30,7 +30,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_register);
         firebaseAuth =  FirebaseAuth.getInstance();
         progressDialog = new ProgressDialog(this);
         buttonRegister = findViewById(R.id.buttonRegister);
@@ -68,13 +68,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if(task.isSuccessful()){
                     // move to landing page
                     progressDialog.dismiss();
-                    Toast.makeText(LoginActivity.this,"Registered Sucessfully",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this,"Registered Sucessfully",Toast.LENGTH_SHORT).show();
 
 
                 }
                 else{
                     progressDialog.dismiss();
-                    Toast.makeText(LoginActivity.this,"User Already present. Try Logging in",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this,"User Already present. Try Logging in",Toast.LENGTH_SHORT).show();
 
                 }
             }
