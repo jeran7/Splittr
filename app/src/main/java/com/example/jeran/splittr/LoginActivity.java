@@ -1,6 +1,7 @@
 package com.example.jeran.splittr;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,36 +20,55 @@ import com.google.firebase.auth.FirebaseAuth;
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
 
 
-
-    private Button buttonRegister;
+    private Button buttonLogin;
     private EditText editTextEmail;
-    private EditText editTextPassword;
-    private TextView textViewSignup;
+    private  EditText editTextPassword;
+    private TextView textViewSignUp;
     private ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        firebaseAuth =  FirebaseAuth.getInstance();
-        progressDialog = new ProgressDialog(this);
-        buttonRegister = findViewById(R.id.buttonRegister);
-        editTextEmail = findViewById(R.id.editTextEmail);
+    firebaseAuth = FirebaseAuth.getInstance();
+
+            if(firebaseAuth.getCurrentUser() != null){
+
+                // go to landing page
+
+            }
+
         editTextPassword = findViewById(R.id.editTextPassword);
+        editTextEmail = findViewById(R.id.editTextEmail);
+        buttonLogin = findViewById(R.id.buttonLogin);
+        textViewSignUp = findViewById(R.id.textViewSignUp);
 
-        textViewSignup = findViewById(R.id.textViewSignin);
 
-        buttonRegister.setOnClickListener(this);
-        textViewSignup.setOnClickListener(this);
+        buttonLogin.setOnClickListener(this);
+        textViewSignUp.setOnClickListener(this);
+    progressDialog = new ProgressDialog(this);
+
     }
 
+    @Override
+    public void onClick(View view) {
+        if(view == buttonLogin){
+            userLogin();
+
+        }
+        if(view == textViewSignUp){
+            finish();
+            startActivity(new Intent(this,RegisterActivity.class));
+
+        }
 
 
-    private void registerUser(){
+    }
+
+    private void userLogin() {
+
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
-
         if(TextUtils.isEmpty(email)){
             Toast.makeText(this,"Please Enter Email",Toast.LENGTH_SHORT).show();
             return;
@@ -60,42 +80,24 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         }
 
-        progressDialog.setMessage("Registering User.....Please Wait.....");
+
+        progressDialog.setMessage("Loggin in Please wait....");
         progressDialog.show();
-        firebaseAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+        firebaseAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
-                    // move to landing page
-                    progressDialog.dismiss();
-                    Toast.makeText(LoginActivity.this,"Registered Sucessfully",Toast.LENGTH_SHORT).show();
 
-
-                }
-                else{
+                    finish();
+                    // if sucessfull more to landing page.
+                    startActivity(new Intent(LoginActivity.this,LandingActivity.class));
                     progressDialog.dismiss();
-                    Toast.makeText(LoginActivity.this,"User Already present. Try Logging in",Toast.LENGTH_SHORT).show();
+                    //  Toast.makeText(this,"Login sucessfull",Toast.LENGTH_SHORT).show();
+                    return;
 
                 }
             }
         });
 
-
     }
-
-    @Override
-    public void onClick(View view){
-
-        if(view == buttonRegister){
-            registerUser();
-        }
-        if(view == textViewSignup){
-            //Open lgoin page
-
-        }
-
-    }
-
-
-
 }
