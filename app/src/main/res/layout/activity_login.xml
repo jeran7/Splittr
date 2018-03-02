@@ -5,45 +5,42 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.jeran.splittr.LoginActivity">
-<LinearLayout
-    android:layout_centerHorizontal="true"
-    android:layout_centerVertical="true"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-    <EditText
-        android:layout_margin="15dp"
-        android:hint="Enter Email ID"
-        android:id="@+id/editTextEmail"
-        android:inputType="textEmailAddress"
+    <LinearLayout
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <EditText
-        android:layout_margin="15dp"
-        android:hint="Enter your Password"
-        android:inputType="textPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/editTextPassword"/>
+        android:layout_height="wrap_content">
 
-    <Button
-        android:layout_margin="15dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Register User"
-        android:id="@+id/buttonRegister"
-        />
+        <EditText
+            android:layout_margin="15dp"
+            android:hint="Enter Email ID"
+            android:id="@+id/editTextEmail"
+            android:inputType="textEmailAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <EditText
+            android:layout_margin="15dp"
+            android:hint="Enter your Password"
+            android:inputType="textPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/editTextPassword"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/textViewSignin"
-        android:textAlignment="center"
-        android:text="Already Register ? Sign In here"/>
+        <Button
+            android:layout_margin="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Login"
+            android:id="@+id/buttonLogin"
+            />
 
-</LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textViewSignUp"
+            android:textAlignment="center"
+            android:text="Don't have an account? Signup Here"/>
 
-
-
+    </LinearLayout>
 </RelativeLayout>
