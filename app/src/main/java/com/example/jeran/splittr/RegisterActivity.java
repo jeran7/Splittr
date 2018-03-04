@@ -16,6 +16,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -24,9 +28,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private Button buttonRegister;
     private EditText editTextEmail;
     private EditText editTextPassword;
+    private EditText firstName;
+    private EditText lastName;
     private TextView textViewSignup;
     private ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
+    private DatabaseReference userDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +44,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         buttonRegister = findViewById(R.id.buttonRegister);
         editTextEmail = findViewById(R.id.editTextEmail);
         editTextPassword = findViewById(R.id.editTextPassword);
+        firstName=findViewById(R.id.editTextFname);
+        lastName=findViewById(R.id.editTextLname);
 
         textViewSignup = findViewById(R.id.textViewSignin);
 
@@ -47,18 +56,27 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
 
     private void registerUser(){
-        String email = editTextEmail.getText().toString().trim();
+        final String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
+        final String fName= firstName.getText().toString().trim();
+        final String lName=lastName.getText().toString().trim();
 
         if(TextUtils.isEmpty(email)){
-            Toast.makeText(this,"Please Enter Email",Toast.LENGTH_SHORT).show();
+            editTextEmail.setError("Please enter email");
             return;
 
         }
         if(TextUtils.isEmpty(password)){
-            Toast.makeText(this,"Please Enter Password",Toast.LENGTH_SHORT).show();
+            editTextPassword.setError("Please enter password");
             return;
-
+        }
+        if(TextUtils.isEmpty(fName)){
+            firstName.setError("Please enter first name");
+            return;
+        }
+        if(TextUtils.isEmpty(lName)){
+            lastName.setError("Please enter last name");
+            return;
         }
 
         progressDialog.setMessage("Registering User.....Please Wait.....");
@@ -68,6 +86,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
                     // move to landing page
+                    ArrayList<String> friends=new ArrayList<String>();
+                    friends.add(email);
+                    userDB = FirebaseDatabase.getInstance().getReference("users");
+                    String id = userDB.push().getKey();
+                    User user = new User(email,fName,lName,friends);
+                    userDB.child(id).setValue(user);
 
                     Toast.makeText(RegisterActivity.this,"Registered Sucessfully",Toast.LENGTH_SHORT).show();
 

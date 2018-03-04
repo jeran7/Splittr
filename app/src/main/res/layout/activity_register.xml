@@ -13,15 +13,29 @@
     android:layout_height="wrap_content">
 
     <EditText
+        android:id="@+id/editTextFname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_margin="15dp"
-        android:hint="Enter Email ID"
+        android:hint="First Name"
+        android:inputType="textPersonName" />
+    <EditText
+        android:id="@+id/editTextLname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:hint="Last Name"
+        android:inputType="textPersonName" />
+    <EditText
+        android:layout_margin="15dp"
+        android:hint="Email"
         android:id="@+id/editTextEmail"
         android:inputType="textEmailAddress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <EditText
         android:layout_margin="15dp"
-        android:hint="Enter your Password"
+        android:hint="********"
         android:inputType="textPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -40,7 +54,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/textViewSignin"
         android:textAlignment="center"
-        android:text="Already Register ? Sign In here"/>
+        android:text="Already registered?"
+        android:textColor="#0000EE"/>
 
 </LinearLayout>
 

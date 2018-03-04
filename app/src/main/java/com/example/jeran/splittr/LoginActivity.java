@@ -69,13 +69,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         String password = editTextPassword.getText().toString().trim();
 
         if(TextUtils.isEmpty(email)){
-            Toast.makeText(this,"Please Enter Email",Toast.LENGTH_SHORT).show();
+            editTextEmail.setError("Please enter email");
             return;
 
         }
 
         if(TextUtils.isEmpty(password)){
-            Toast.makeText(this,"Please Enter Password",Toast.LENGTH_SHORT).show();
+            editTextPassword.setError("Please enter password");
             return;
 
         }
