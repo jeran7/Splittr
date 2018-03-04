@@ -1,10 +1,5 @@
 package com.example.jeran.splittr;
 
-/**
- * Diksha Jaiswal
- * Jeran Jeyachandran
- * Dhruv Mevada
- */
 
 public class Expense
 {

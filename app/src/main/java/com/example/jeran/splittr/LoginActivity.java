@@ -17,8 +17,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
-
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Button buttonLogin;
     private EditText editTextEmail;
@@ -26,27 +25,28 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private TextView textViewSignUp;
     private ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-    firebaseAuth = FirebaseAuth.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
 
-            if(firebaseAuth.getCurrentUser() != null){
+        if(firebaseAuth.getCurrentUser() != null) {
 
-                // go to landing page
+            // go to landing page
 
-            }
+        }
 
         editTextPassword = findViewById(R.id.editTextPassword);
         editTextEmail = findViewById(R.id.editTextEmail);
         buttonLogin = findViewById(R.id.buttonLogin);
         textViewSignUp = findViewById(R.id.textViewSignUp);
 
-
         buttonLogin.setOnClickListener(this);
         textViewSignUp.setOnClickListener(this);
-    progressDialog = new ProgressDialog(this);
+        progressDialog = new ProgressDialog(this);
 
     }
 
@@ -61,28 +61,28 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             startActivity(new Intent(this,RegisterActivity.class));
 
         }
-
-
     }
 
     private void userLogin() {
 
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
+
         if(TextUtils.isEmpty(email)){
             Toast.makeText(this,"Please Enter Email",Toast.LENGTH_SHORT).show();
             return;
 
         }
+
         if(TextUtils.isEmpty(password)){
             Toast.makeText(this,"Please Enter Password",Toast.LENGTH_SHORT).show();
             return;
 
         }
 
-
-        progressDialog.setMessage("Loggin in Please wait....");
+        progressDialog.setMessage("Logging in please wait...");
         progressDialog.show();
+
         firebaseAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -98,6 +98,5 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }
             }
         });
-
     }
 }

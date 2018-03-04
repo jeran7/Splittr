@@ -1,7 +1,9 @@
 package com.example.jeran.splittr;
 
 /**
- * Created by Diksha,Dhruv,Jeran on 3/3/2018.
+ * Diksha Jaiswal
+ * Jeran Jeyachandran
+ * Dhruv Mevada
  */
 
 public class ListViewFriendsData {
