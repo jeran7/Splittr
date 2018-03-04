@@ -59,7 +59,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if(view == textViewSignUp){
             finish();
             startActivity(new Intent(this,RegisterActivity.class));
-
         }
     }
 
@@ -71,13 +70,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if(TextUtils.isEmpty(email)){
             editTextEmail.setError("Please enter email");
             return;
-
         }
 
         if(TextUtils.isEmpty(password)){
             editTextPassword.setError("Please enter password");
             return;
-
         }
 
         progressDialog.setMessage("Logging in please wait...");
@@ -86,7 +83,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         firebaseAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
+                if(task.isSuccessful()) {
 
                     finish();
                     // if sucessfull more to landing page.

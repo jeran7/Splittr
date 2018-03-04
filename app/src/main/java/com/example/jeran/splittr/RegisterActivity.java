@@ -21,16 +21,16 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
-public class RegisterActivity extends AppCompatActivity implements View.OnClickListener{
-
-
+public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Button buttonRegister;
     private EditText editTextEmail;
     private EditText editTextPassword;
+
     private EditText firstName;
     private EditText lastName;
     private TextView textViewSignup;
+
     private ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
     private DatabaseReference userDB;
@@ -39,47 +39,48 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
         firebaseAuth =  FirebaseAuth.getInstance();
         progressDialog = new ProgressDialog(this);
         buttonRegister = findViewById(R.id.buttonRegister);
+
         editTextEmail = findViewById(R.id.editTextEmail);
         editTextPassword = findViewById(R.id.editTextPassword);
         firstName=findViewById(R.id.editTextFname);
         lastName=findViewById(R.id.editTextLname);
 
         textViewSignup = findViewById(R.id.textViewSignin);
-
         buttonRegister.setOnClickListener(this);
         textViewSignup.setOnClickListener(this);
     }
 
-
-
-    private void registerUser(){
+    private void registerUser() {
         final String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
         final String fName= firstName.getText().toString().trim();
         final String lName=lastName.getText().toString().trim();
 
-        if(TextUtils.isEmpty(email)){
+        if(TextUtils.isEmpty(email)) {
             editTextEmail.setError("Please enter email");
             return;
-
         }
-        if(TextUtils.isEmpty(password)){
+
+        if(TextUtils.isEmpty(password)) {
             editTextPassword.setError("Please enter password");
             return;
         }
-        if(TextUtils.isEmpty(fName)){
+
+        if(TextUtils.isEmpty(fName)) {
             firstName.setError("Please enter first name");
             return;
         }
-        if(TextUtils.isEmpty(lName)){
+
+        if(TextUtils.isEmpty(lName)) {
             lastName.setError("Please enter last name");
             return;
         }
 
-        progressDialog.setMessage("Registering User.....Please Wait.....");
+        progressDialog.setMessage("Registering user...");
         progressDialog.show();
         firebaseAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
@@ -93,36 +94,26 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     User user = new User(email,fName,lName,friends);
                     userDB.child(id).setValue(user);
 
-                    Toast.makeText(RegisterActivity.this,"Registered Sucessfully",Toast.LENGTH_SHORT).show();
-
-
+                    Toast.makeText(RegisterActivity.this,"Registered successfully",Toast.LENGTH_SHORT).show();
                 }
-                else{
 
-                    Toast.makeText(RegisterActivity.this,"User Already present. Try Logging in",Toast.LENGTH_SHORT).show();
+                else {
 
+                    Toast.makeText(RegisterActivity.this,"User already exists, please login.",Toast.LENGTH_SHORT).show();
                 }
                 progressDialog.dismiss();
             }
         });
-
-
     }
 
     @Override
-    public void onClick(View view){
+    public void onClick(View view) {
 
-        if(view == buttonRegister){
+        if(view == buttonRegister) {
             registerUser();
         }
-        if(view == textViewSignup){
-            //Open lgoin page
+        if(view == textViewSignup) {
             startActivity(new Intent(this,LoginActivity.class));
-
         }
-
     }
-
-
-
 }
