@@ -1,9 +1,21 @@
 <resources>
     <string name="app_name">Splittr</string>
     <string name="title_activity_main2">Main2Activity</string>
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
     <string name="action_settings">Settings</string>
+
+    <!-- Strings for both login and register page -->
+    <string name="email">Email</string>
+    <string name="passwordCharacters">********</string>
+
+    <!-- Strings for login page -->
+    <string name="loginButton">Login</string>
+    <string name="newUserPrompt">New User?</string>
+
+    <!-- Strings for registration page -->
+    <string name="firstName">First Name</string>
+    <string name="lastName">Last Name</string>
+    <string name="registerButton">Register</string>
+    <string name="alreadyRegisteredPrompt">Already Registered?</string>
 </resources>

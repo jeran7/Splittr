@@ -17,25 +17,27 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
-        android:hint="First Name"
+        android:hint="@string/firstName"
         android:inputType="textPersonName" />
+
     <EditText
         android:id="@+id/editTextLname"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
-        android:hint="Last Name"
+        android:hint="@string/lastName"
         android:inputType="textPersonName" />
+
     <EditText
         android:layout_margin="15dp"
-        android:hint="Email"
+        android:hint="@string/email"
         android:id="@+id/editTextEmail"
         android:inputType="textEmailAddress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <EditText
         android:layout_margin="15dp"
-        android:hint="********"
+        android:hint="@string/passwordCharacters"
         android:inputType="textPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -45,7 +47,7 @@
         android:layout_margin="15dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Register User"
+        android:text="@string/registerButton"
         android:id="@+id/buttonRegister"
         />
 
@@ -54,11 +56,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/textViewSignin"
         android:textAlignment="center"
-        android:text="Already registered?"
+        android:text="@string/alreadyRegisteredPrompt"
         android:textColor="#0000EE"/>
 
 </LinearLayout>
-
-
 
 </RelativeLayout>

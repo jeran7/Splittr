@@ -82,6 +82,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         progressDialog.setMessage("Registering user...");
         progressDialog.show();
+
         firebaseAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -98,9 +99,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 }
 
                 else {
-
                     Toast.makeText(RegisterActivity.this,"User already exists, please login.",Toast.LENGTH_SHORT).show();
                 }
+
                 progressDialog.dismiss();
             }
         });
@@ -112,6 +113,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         if(view == buttonRegister) {
             registerUser();
         }
+
         if(view == textViewSignup) {
             startActivity(new Intent(this,LoginActivity.class));
         }

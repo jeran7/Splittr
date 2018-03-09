@@ -36,10 +36,6 @@ public class LandingActivity extends AppCompatActivity
         final String email = firebaseAuth.getCurrentUser().getEmail().toString();
         summary = findViewById(R.id.summary);
 
-        final String userId = firebaseAuth.getCurrentUser().getUid();
-
-        Log.wtf("test", "userId: " + userId);
-
         db = FirebaseDatabase.getInstance().getReference("expenses");
         db.addValueEventListener(new ValueEventListener()
         {
@@ -73,9 +69,7 @@ public class LandingActivity extends AppCompatActivity
                             {
                                 summary.setText("Owes $" + Math.abs(total));
                             }
-
                         }
-
                     }
 
                     catch (JSONException e)
