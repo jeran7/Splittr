@@ -86,7 +86,7 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
         firebaseAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
+                if(task.isSuccessful()) {
                     // move to landing page
                     ArrayList<String> friends=new ArrayList<String>();
                     friends.add(email);

@@ -62,7 +62,7 @@
         android:id="@+id/textViewSignin"
         android:textAlignment="center"
         android:text="@string/alreadyRegisteredPrompt"
-        android:textColor="#0000EE"/>
+        android:textColor="@color/splittrBlue"/>
 
 </LinearLayout>
 
