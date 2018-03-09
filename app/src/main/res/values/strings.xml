@@ -18,4 +18,7 @@
     <string name="lastName">Last Name</string>
     <string name="registerButton">Register</string>
     <string name="alreadyRegisteredPrompt">Already Registered?</string>
+
+    <!-- Splittr title -->
+    <string name="splittrTitle">Splittr</string>
 </resources>

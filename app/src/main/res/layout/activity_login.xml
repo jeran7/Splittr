@@ -4,13 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/lightGray"
     tools:context="com.example.jeran.splittr.LoginActivity">
+
     <LinearLayout
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/white">
 
         <EditText
             android:layout_margin="15dp"
@@ -34,15 +37,30 @@
             android:layout_height="wrap_content"
             android:text="@string/loginButton"
             android:id="@+id/buttonLogin"
-            />
+            android:textColor="@color/white"
+            android:background="@drawable/roundedbutton"/>
 
         <TextView
+            android:layout_margin="15dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/textViewSignUp"
             android:textAlignment="center"
             android:text="@string/newUserPrompt"
-            android:textColor="#0000EE"/>
+            android:textColor="@color/splittrBlue"/>
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/splittrTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:text="@string/splittrTitle"
+        android:textColor="@color/splittrGreen"
+        android:textSize="30sp"
+        android:fontFamily="roboto-light"/>
+
 </RelativeLayout>

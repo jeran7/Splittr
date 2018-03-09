@@ -20,7 +20,6 @@
         </activity>
         <activity android:name=".LoginActivity" />
         <activity android:name=".LandingActivity" />
-        <!-- <activity android:name=".DummyActivity"></activity> -->
         <activity android:name=".ExpensesActivity"></activity>
     </application>
 
