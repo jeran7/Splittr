@@ -60,16 +60,6 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
         final String fName= firstName.getText().toString().trim();
         final String lName=lastName.getText().toString().trim();
 
-        if(TextUtils.isEmpty(email)) {
-            editTextEmail.setError("Please enter email");
-            return;
-        }
-
-        if(TextUtils.isEmpty(password)) {
-            editTextPassword.setError("Please enter password");
-            return;
-        }
-
         if(TextUtils.isEmpty(fName)) {
             firstName.setError("Please enter first name");
             return;
@@ -77,6 +67,16 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
 
         if(TextUtils.isEmpty(lName)) {
             lastName.setError("Please enter last name");
+            return;
+        }
+
+        if(TextUtils.isEmpty(email)) {
+            editTextEmail.setError("Please enter email");
+            return;
+        }
+
+        if(TextUtils.isEmpty(password)) {
+            editTextPassword.setError("Please enter password");
             return;
         }
 
