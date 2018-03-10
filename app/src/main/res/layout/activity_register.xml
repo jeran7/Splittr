@@ -12,8 +12,7 @@
     android:layout_centerVertical="true"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/white">
+    android:layout_height="wrap_content">
 
     <EditText
         android:id="@+id/editTextFname"
@@ -53,7 +52,7 @@
         android:text="@string/registerButton"
         android:id="@+id/buttonRegister"
         android:textColor="@color/white"
-        android:background="@drawable/roundedbutton"/>
+        android:background="@drawable/rounded_button_register"/>
 
     <TextView
         android:layout_margin="15dp"
@@ -62,6 +61,7 @@
         android:id="@+id/textViewSignin"
         android:textAlignment="center"
         android:text="@string/alreadyRegisteredPrompt"
+        android:textSize="18sp"
         android:textColor="@color/splittrBlue"/>
 
 </LinearLayout>
@@ -75,7 +75,7 @@
         android:layout_marginTop="24dp"
         android:text="@string/splittrTitle"
         android:textColor="@color/splittrGreen"
-        android:textSize="30sp"
+        android:textSize="35sp"
         android:fontFamily="roboto-light"/>
 
 </RelativeLayout>
