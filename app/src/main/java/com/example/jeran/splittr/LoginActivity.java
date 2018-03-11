@@ -12,6 +12,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -80,8 +81,18 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                 if(task.isSuccessful()) {
                     finish();
                     startActivity(new Intent(LoginActivity.this,LandingActivity.class));
-                    progressDialog.dismiss();
                 }
+
+                else
+                {
+                    Toast toast = Toast.makeText(getApplicationContext(), "Incorrect credentials, try again", Toast.LENGTH_SHORT);
+                    View view = toast.getView();
+                    view.setPadding(20, 20, 20, 20);
+                    view.setBackgroundColor(getResources().getColor(R.color.owes));
+                    toast.show();
+                }
+
+                progressDialog.dismiss();
             }
         });
     }

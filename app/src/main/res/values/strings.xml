@@ -21,4 +21,7 @@
 
     <!-- Splittr title -->
     <string name="splittrTitle">Splittr</string>
+
+    <string name="settledUp">settled up</string>
+
 </resources>

@@ -87,19 +87,30 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()) {
-                    // move to landing page
-                    ArrayList<String> friends=new ArrayList<String>();
+
+                    ArrayList<String> friends=new ArrayList<>();
                     friends.add(email);
                     userDB = FirebaseDatabase.getInstance().getReference("users");
+
                     String id = userDB.push().getKey();
                     User user = new User(email,fName,lName,friends);
                     userDB.child(id).setValue(user);
 
-                    Toast.makeText(RegisterActivity.this,"Registered successfully",Toast.LENGTH_SHORT).show();
+                    Toast toast = Toast.makeText(getApplicationContext(), "Registered successfully", Toast.LENGTH_SHORT);
+                    View view = toast.getView();
+                    view.setPadding(20, 20, 20, 20);
+                    view.setBackgroundColor(getResources().getColor(R.color.splittrGreen));
+                    toast.show();
+
+                    startActivity(new Intent(RegisterActivity.this,LandingActivity.class));
                 }
 
                 else {
-                    Toast.makeText(RegisterActivity.this,"User already exists, please login.",Toast.LENGTH_SHORT).show();
+                    Toast toast = Toast.makeText(getApplicationContext(), "User already exists, please login", Toast.LENGTH_SHORT);
+                    View view = toast.getView();
+                    view.setPadding(20, 20, 20, 20);
+                    view.setBackgroundColor(getResources().getColor(R.color.owes));
+                    toast.show();
                 }
 
                 progressDialog.dismiss();
