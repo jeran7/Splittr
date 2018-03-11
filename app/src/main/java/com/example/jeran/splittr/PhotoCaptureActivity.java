@@ -58,6 +58,8 @@ public class PhotoCaptureActivity extends AppCompatActivity {
         }
     }
 
+
+
     private void startOCR () {
         try {
             Bitmap bitmap = getBitmap();
