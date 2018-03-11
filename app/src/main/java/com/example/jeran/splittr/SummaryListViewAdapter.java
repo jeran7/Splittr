@@ -72,7 +72,12 @@ public class SummaryListViewAdapter extends ArrayAdapter<SummaryListViewDataMode
             netAmountStr = String.valueOf(dataModel.getAmount()) + "0";
         }
 
-        if(dataModel.getAmount() >= 0)
+        if(dataModel.getAmount() == 0)
+        {
+            viewHolder.netAmount.setText("settled up");
+        }
+
+        else if(dataModel.getAmount() > 0)
         {
             viewHolder.netAmount.setText("$" + netAmountStr);
             viewHolder.netAmount.setTextColor(context.getResources().getColor(R.color.splittrGreen));

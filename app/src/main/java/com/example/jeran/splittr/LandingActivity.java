@@ -45,6 +45,7 @@ public class LandingActivity extends AppCompatActivity
         dataModels = new ArrayList<>();
         dataModels.add(new SummaryListViewDataModel("test", 35));
         dataModels.add(new SummaryListViewDataModel("test2", -35.56));
+        dataModels.add(new SummaryListViewDataModel("test3", 0));
 
         adapter = new SummaryListViewAdapter(dataModels, getApplicationContext());
         listView.setAdapter(adapter);
