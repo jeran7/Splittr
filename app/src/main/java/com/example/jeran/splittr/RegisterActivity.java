@@ -1,9 +1,9 @@
 package com.example.jeran.splittr;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -21,7 +21,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
-public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
+public class RegisterActivity extends Activity implements View.OnClickListener {
 
     private Button buttonRegister;
     private EditText editTextEmail;
@@ -56,19 +56,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     private void registerUser() {
         final String email = editTextEmail.getText().toString().trim();
-        String password = editTextPassword.getText().toString().trim();
+        final String password = editTextPassword.getText().toString().trim();
         final String fName= firstName.getText().toString().trim();
         final String lName=lastName.getText().toString().trim();
-
-        if(TextUtils.isEmpty(email)) {
-            editTextEmail.setError("Please enter email");
-            return;
-        }
-
-        if(TextUtils.isEmpty(password)) {
-            editTextPassword.setError("Please enter password");
-            return;
-        }
 
         if(TextUtils.isEmpty(fName)) {
             firstName.setError("Please enter first name");
@@ -80,12 +70,23 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             return;
         }
 
+        if(TextUtils.isEmpty(email)) {
+            editTextEmail.setError("Please enter email");
+            return;
+        }
+
+        if(TextUtils.isEmpty(password)) {
+            editTextPassword.setError("Please enter password");
+            return;
+        }
+
         progressDialog.setMessage("Registering user...");
         progressDialog.show();
+
         firebaseAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
+                if(task.isSuccessful()) {
                     // move to landing page
                     ArrayList<String> friends=new ArrayList<String>();
                     friends.add(email);
@@ -98,9 +99,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 }
 
                 else {
-
                     Toast.makeText(RegisterActivity.this,"User already exists, please login.",Toast.LENGTH_SHORT).show();
                 }
+
                 progressDialog.dismiss();
             }
         });
@@ -112,6 +113,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         if(view == buttonRegister) {
             registerUser();
         }
+
         if(view == textViewSignup) {
             startActivity(new Intent(this,LoginActivity.class));
         }

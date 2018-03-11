@@ -3,6 +3,7 @@ package com.example.jeran.splittr;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +17,7 @@ import com.google.firebase.database.ValueEventListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -23,9 +25,12 @@ import java.util.HashMap;
 
 public class LandingActivity extends AppCompatActivity
 {
-    TextView summary;
     FirebaseAuth firebaseAuth;
     DatabaseReference db;
+
+    ArrayList<SummaryListViewDataModel> dataModels;
+    ListView listView;
+    private static SummaryListViewAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -33,14 +38,19 @@ public class LandingActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing);
         firebaseAuth =  FirebaseAuth.getInstance();
+
         final String email = firebaseAuth.getCurrentUser().getEmail().toString();
-        summary = findViewById(R.id.summary);
+        listView = findViewById(R.id.summaryListView);
 
-        final String userId = firebaseAuth.getCurrentUser().getUid();
+        dataModels = new ArrayList<>();
+        dataModels.add(new SummaryListViewDataModel("test", 35));
+        dataModels.add(new SummaryListViewDataModel("test2", -35.56));
 
-        Log.wtf("test", "userId: " + userId);
+        adapter = new SummaryListViewAdapter(dataModels, getApplicationContext());
+        listView.setAdapter(adapter);
 
-        db = FirebaseDatabase.getInstance().getReference("expenses");
+//        db = FirebaseDatabase.getInstance().getReference("expenses");
+        /*
         db.addValueEventListener(new ValueEventListener()
         {
             @Override
@@ -73,9 +83,7 @@ public class LandingActivity extends AppCompatActivity
                             {
                                 summary.setText("Owes $" + Math.abs(total));
                             }
-
                         }
-
                     }
 
                     catch (JSONException e)
@@ -90,6 +98,6 @@ public class LandingActivity extends AppCompatActivity
             {
 
             }
-        });
+        }); */
     }
 }
