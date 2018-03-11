@@ -1,8 +1,11 @@
 package com.example.jeran.splittr;
 
+import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,6 +51,16 @@ public class LandingActivity extends AppCompatActivity
 
         adapter = new SummaryListViewAdapter(dataModels, getApplicationContext());
         listView.setAdapter(adapter);
+
+        FloatingActionButton fb=(FloatingActionButton) findViewById(R.id.fab);
+        fb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent= new Intent(getApplicationContext(),AddBillActivity.class);
+                startActivity(intent);
+            }
+        });
 
 //        db = FirebaseDatabase.getInstance().getReference("expenses");
         /*
