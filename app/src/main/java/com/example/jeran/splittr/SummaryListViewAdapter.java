@@ -65,10 +65,16 @@ public class SummaryListViewAdapter extends ArrayAdapter<SummaryListViewDataMode
         }
 
         viewHolder.friendName.setText(dataModel.getFriendName());
+        String netAmountStr = String.valueOf(dataModel.getAmount());
+
+        if(netAmountStr.indexOf('.') == (netAmountStr.length() - 2))
+        {
+            netAmountStr = String.valueOf(dataModel.getAmount()) + "0";
+        }
 
         if(dataModel.getAmount() >= 0)
         {
-            viewHolder.netAmount.setText("$" + dataModel.getAmount());
+            viewHolder.netAmount.setText("$" + netAmountStr);
             viewHolder.netAmount.setTextColor(context.getResources().getColor(R.color.splittrGreen));
         }
 
