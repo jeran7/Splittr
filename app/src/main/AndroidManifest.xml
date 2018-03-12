@@ -22,7 +22,10 @@
         <activity android:name=".LoginActivity" />
         <activity android:name=".LandingActivity" />
         <activity android:name=".ExpensesActivity" />
-        <activity android:name=".PhotoCaptureActivity"></activity>
+        <activity android:name=".PhotoCaptureActivity" />
+        <activity android:name=".AddBillActivity" />
+        <activity android:name=".EnterBillActivity" />
+        <activity android:name=".AddFriendsActivity"/>
     </application>
 
 </manifest>

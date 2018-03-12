@@ -18,6 +18,8 @@
     <string name="lastName">Last Name</string>
     <string name="registerButton">Register</string>
     <string name="alreadyRegisteredPrompt">Already Registered?</string>
+    <string name="addManualBill">Enter Bill</string>
+    <string name="takePicture">Take Bill Picture</string>
 
     <!-- Splittr title -->
     <string name="splittrTitle">Splittr</string>
