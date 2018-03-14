@@ -25,5 +25,8 @@
     <string name="splittrTitle">Splittr</string>
 
     <string name="settledUp">settled up</string>
+    <string name="USER_LOGIN">isUserLoggedIn</string>
+    <string name="openDrawer">Open Drawer</string>
+    <string name="closeDrawer">Close Drawer</string>
 
 </resources>
