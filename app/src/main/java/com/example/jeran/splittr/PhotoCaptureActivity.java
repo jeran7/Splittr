@@ -12,7 +12,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.gms.vision.Frame;
@@ -23,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Scanner;
 
 public class PhotoCaptureActivity extends AppCompatActivity {
     private static final String TAG = PhotoCaptureActivity.class.getSimpleName();
@@ -30,6 +33,7 @@ public class PhotoCaptureActivity extends AppCompatActivity {
     private TextView textView;
     private String mCurrentPhotoPath;
     private ImageView imageView;
+    private ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,14 +41,10 @@ public class PhotoCaptureActivity extends AppCompatActivity {
         setContentView(R.layout.activity_photo_capture);
 
         textView = findViewById(R.id.textView);
-        imageView = findViewById(R.id.imageView);
+//        imageView = findViewById(R.id.imageView);
+        listView = findViewById(R.id.scannedItemList);
 
-        this.findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dispatchTakePictureIntent();
-            }
-        });
+        dispatchTakePictureIntent();
     }
 
     @Override
@@ -58,12 +58,10 @@ public class PhotoCaptureActivity extends AppCompatActivity {
         }
     }
 
-
-
     private void startOCR () {
         try {
             Bitmap bitmap = getBitmap();
-            imageView.setImageBitmap(bitmap);
+//            imageView.setImageBitmap(bitmap);
 
             detector = new TextRecognizer.Builder(this).build();
             if (detector.isOperational() && null != bitmap) {
@@ -80,6 +78,17 @@ public class PhotoCaptureActivity extends AppCompatActivity {
                     textView.setText("Scan failed");
                 } else {
                     textView.setText(sb.toString());
+
+                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
+
+                    Scanner scanner = new Scanner(sb.toString());
+                    while(scanner.hasNextLine())
+                    {
+                        adapter.add(scanner.nextLine());
+                    }
+
+                    listView.setAdapter(adapter);
+
                 }
             } else {
                 textView.setText("Invalid image");
