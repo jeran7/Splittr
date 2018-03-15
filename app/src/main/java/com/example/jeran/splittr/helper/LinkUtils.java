@@ -6,6 +6,9 @@ package com.example.jeran.splittr.helper;
 
 public class LinkUtils {
 
-    private static String wsLink = "localhost/splittr/ws/";
-    public static final String PARENT_REGISTRATION_URL = wsLink + "registration.php";
+    // This URL changes based on where your server is
+    // For AWS server it will be the link to your AWS EC2 instance
+    // For localhost it will be your IPv4 address.
+    private static String wsLink = "http://192.168.67.2/workspace/splittr/ws/";
+    public static final String REGISTRATION_URL = wsLink + "registration.php";
 }
