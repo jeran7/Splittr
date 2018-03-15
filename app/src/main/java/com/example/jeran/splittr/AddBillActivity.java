@@ -30,6 +30,7 @@ public class AddBillActivity extends AppCompatActivity implements View.OnClickLi
                 startActivity(new Intent(AddBillActivity.this, EnterBillActivity.class));
                 break;
             case R.id.takeBillPictureButton:
+                startActivity(new Intent(getApplicationContext(), PhotoCaptureActivity.class));
                 break;
         }
     }
