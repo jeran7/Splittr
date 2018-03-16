@@ -16,5 +16,6 @@ public class LinkUtils {
 
     public static final String REGISTRATION_URL = wsLink + "registration.php";
     public static final String LOGIN_URL = wsLink + "login.php";
+    public static final String LIST_USERS_URL = wsLink + "listUsers.php";
 
 }

@@ -57,56 +57,6 @@ public class LandingActivity extends AppCompatActivity {
             }
         });
 
-//        db = FirebaseDatabase.getInstance().getReference("expenses");
-        /*
-        db.addValueEventListener(new ValueEventListener()
-        {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot)
-            {
-                HashMap<String, Object> map =  (HashMap<String, Object>) dataSnapshot.getValue();
-
-                JSONObject user;
-                double owes = 0;
-                double lent = 0;
-                double total = 0;
-
-                for(String key: map.keySet())
-                {
-                    try
-                    {
-                        user = new JSONObject(map.get(key).toString());
-                        if(user.getString("ownerEmail").equalsIgnoreCase(email))
-                        {
-                            owes = user.getDouble("owes");
-                            lent = user.getDouble("lent");
-                            total = lent - owes;
-
-                            if(total >= 0)
-                            {
-                                summary.setText("Lent $" + total);
-                            }
-
-                            else
-                            {
-                                summary.setText("Owes $" + Math.abs(total));
-                            }
-                        }
-                    }
-
-                    catch (JSONException e)
-                    {
-                        e.printStackTrace();
-                    }
-               }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError)
-            {
-
-            }
-        }); */
     }
 
     private boolean isUserLoggedIn() {

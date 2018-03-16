@@ -1,12 +1,16 @@
 package com.example.jeran.splittr;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.AdapterView;
@@ -15,6 +19,17 @@ import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.example.jeran.splittr.helper.JsonCallAsync;
+import com.example.jeran.splittr.helper.LinkUtils;
+import com.example.jeran.splittr.helper.ResponseBin;
+import com.example.jeran.splittr.helper.ResponseListener;
+import com.example.jeran.splittr.helper.ToastUtils;
+import com.google.api.client.json.JsonString;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,43 +42,33 @@ public class AddFriendsActivity extends AppCompatActivity implements AdapterView
     private ListView searchQueryList;
     private ArrayList<String> filteredFriendsList = new ArrayList<>();
     ArrayAdapter<String> arrayAdapter;
-    private HashMap<String, String> friends;
+    private HashMap<String, String> friends = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_friends);
 
-        initializeFriends();
         searchQuery = (EditText) findViewById(R.id.searchQuery);
         searchQueryList = (ListView) findViewById(R.id.searchResultList);
 
-        for (String friend : friends.keySet()) {
-            filteredFriendsList.add(friend);
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
+        final String email = sharedPreferences.getString(getString(R.string.USER_EMAIL), "");
+
+        JSONObject registrationData = new JSONObject();
+
+        try
+        {
+            registrationData.put("email", email);
+            registrationData.put("includeSelf", true);
         }
 
-        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, filteredFriendsList);
-        searchQueryList.setAdapter(arrayAdapter);
-        searchQueryList.setOnItemClickListener(this);
+        catch (JSONException e)
+        {
+            Log.d("Splittr", e.toString());
+        }
 
-        searchQuery.addTextChangedListener(queryWatcher);
-    }
-
-    private void initializeFriends() {
-        friends = new HashMap<>();
-        friends.put("Abhi Jadav", "ajadav@scu.edu");
-        friends.put("Diksha Jaiswal", "djaiswal@scu.edu");
-        friends.put("Dhruv Mevada", "dmevada@scu.edu");
-        friends.put("Jeran J", "jjeran@scu.edu");
-        friends.put("Saumya Sinha", "ssinha@scu.edu");
-        friends.put("Rasika Telang", "rtelang@scu.edu");
-        friends.put("Pooja Ranawade", "pranawade@scu.edu");
-        friends.put("Netra Agrawal", "nagrawal@scu.edu");
-        friends.put("Heena Tarachandani", "htarachandani@scu.edu");
-        friends.put("Tejaswi S", "stejaswi@scu.edu");
-        friends.put("Ashwini Raravi", "araravi@scu.edu");
-        friends.put("Priyanshi Karangia", "pkarangia@scu.edu");
-        friends.put("Apurva Patel", "apatel@scu.edu");
+        new JsonCallAsync(AddFriendsActivity.this, "listUsersRequest", registrationData.toString(), LinkUtils.LIST_USERS_URL, responseListener, true, "GET").execute();
     }
 
     private TextWatcher queryWatcher = new TextWatcher() {
@@ -125,4 +130,52 @@ public class AddFriendsActivity extends AppCompatActivity implements AdapterView
                 .setPositiveButton("Add", dialogClickListener)
                 .setNegativeButton("Cancel", dialogClickListener).show();
     }
+
+    ResponseListener responseListener = new ResponseListener() {
+        @Override
+        public void setOnResponseListener(ResponseBin responseBin) {
+
+            if (responseBin != null && responseBin.getResponse() != null) {
+                String response = responseBin.getResponse();
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    String result = jsonObject.getString("result");
+
+                    if (result.equals("success")) {
+
+                        JSONArray users = jsonObject.getJSONArray("users");
+
+                        for(int i = 0; i < users.length(); i++)
+                        {
+                            String name = users.getJSONObject(i).getString("first") + " " + users.getJSONObject(i).getString("last");
+                            String email = users.getJSONObject(i).getString("email");
+
+                            friends.put(name, email);
+                            ToastUtils.showToast(getApplicationContext(), "name: " + friends.size(), true);
+                        }
+
+                        for (String friend : friends.keySet()) {
+                            filteredFriendsList.add(friend);
+                        }
+
+                        ToastUtils.showToast(getApplicationContext(), "filteredFriends size:  " + filteredFriendsList.size(), true);
+
+                        arrayAdapter = new ArrayAdapter<String>(AddFriendsActivity.this, android.R.layout.simple_list_item_1, filteredFriendsList);
+                        searchQueryList.setAdapter(arrayAdapter);
+                        searchQueryList.setOnItemClickListener(AddFriendsActivity.this);
+
+                        searchQuery.addTextChangedListener(queryWatcher);
+                    }
+
+                    else if (result.equals("failed")) {
+                        ToastUtils.showToast(getApplicationContext(), "Could not fetch list of available friends", false);
+                    }
+                }
+
+                catch (JSONException e) {
+                    Toast.makeText(AddFriendsActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    };
 }

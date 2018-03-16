@@ -112,9 +112,11 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                         SharedPreferences.Editor editor = sharedPref.edit();
                         editor.putBoolean(getString(R.string.USER_LOGIN), true);
 
+                        String email = jsonObject.getString("email");
                         String name = jsonObject.getString("name");
 
-                        editor.putString("name", name);
+                        editor.putString(getString(R.string.USER_NAME), name);
+                        editor.putString(getString(R.string.USER_EMAIL), email);
                         editor.commit();
 
                         finish();
