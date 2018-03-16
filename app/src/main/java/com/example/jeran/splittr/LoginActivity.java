@@ -6,24 +6,29 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
+import com.example.jeran.splittr.helper.JsonCallAsync;
+import com.example.jeran.splittr.helper.LinkUtils;
+import com.example.jeran.splittr.helper.ResponseBin;
+import com.example.jeran.splittr.helper.ResponseListener;
+import com.example.jeran.splittr.helper.ToastUtils;
 import com.google.firebase.auth.FirebaseAuth;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class LoginActivity extends Activity implements View.OnClickListener {
 
     private Button buttonLogin;
-    private EditText editTextEmail;
-    private EditText editTextPassword;
+    private EditText email;
+    private EditText password;
     private TextView textViewSignUp;
     private ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
@@ -35,8 +40,8 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_login);
         firebaseAuth = FirebaseAuth.getInstance();
 
-        editTextPassword = findViewById(R.id.editTextPassword);
-        editTextEmail = findViewById(R.id.editTextEmail);
+        password = findViewById(R.id.editTextPassword);
+        email = findViewById(R.id.editTextEmail);
         buttonLogin = findViewById(R.id.buttonLogin);
         textViewSignUp = findViewById(R.id.textViewSignUp);
 
@@ -59,45 +64,72 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
     private void userLogin() {
 
-        String email = editTextEmail.getText().toString().trim();
-        String password = editTextPassword.getText().toString().trim();
+        final String email = this.email.getText().toString().trim();
+        final String password = this.password.getText().toString().trim();
 
         if(TextUtils.isEmpty(email)){
-            editTextEmail.setError("Please enter email");
+            this.email.setError("Please enter email");
             return;
         }
 
         if(TextUtils.isEmpty(password)){
-            editTextPassword.setError("Please enter password");
+            this.password.setError("Please enter password");
             return;
         }
 
-        progressDialog.setMessage("Logging in please wait...");
+        progressDialog.setMessage("Logging in...");
         progressDialog.show();
 
-        firebaseAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()) {
-                    SharedPreferences sharedPref = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sharedPref.edit();
-                    editor.putBoolean(getString(R.string.USER_LOGIN), true);
-                    editor.commit();
-                    finish();
-                    startActivity(new Intent(LoginActivity.this,LandingActivity.class));
-                }
+        JSONObject loginData = new JSONObject();
 
-                else
-                {
-                    Toast toast = Toast.makeText(getApplicationContext(), "Incorrect credentials, try again", Toast.LENGTH_SHORT);
-                    View view = toast.getView();
-                    view.setPadding(20, 20, 20, 20);
-                    view.setBackgroundColor(getResources().getColor(R.color.owes));
-                    toast.show();
-                }
+        try
+        {
+            loginData.put("email", email);
+            loginData.put("password", password);
+            loginData.put("gcmToken", LinkUtils.gcmToken);
+        }
 
-                progressDialog.dismiss();
-            }
-        });
+        catch (JSONException e) {
+            Log.d("Splittr", e.toString());
+        }
+
+        new JsonCallAsync(LoginActivity.this, "loginRequest", loginData.toString(), LinkUtils.LOGIN_URL, responseListener, true, "GET").execute();
     }
+
+    ResponseListener responseListener = new ResponseListener() {
+        @Override
+        public void setOnResponseListener(ResponseBin responseBin) {
+
+            if (responseBin != null && responseBin.getResponse() != null) {
+                String response = responseBin.getResponse();
+                try
+                {
+                    JSONObject jsonObject = new JSONObject(response);
+                    String result = jsonObject.getString("result");
+
+                    if (result.equals("success")) {
+                        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.putBoolean(getString(R.string.USER_LOGIN), true);
+
+                        String name = jsonObject.getString("name");
+
+                        editor.putString("name", name);
+                        editor.commit();
+
+                        finish();
+                        startActivity(new Intent(LoginActivity.this, LandingActivity.class));
+                    }
+
+                    else if (result.equals("failed")) {
+                        progressDialog.cancel();
+                        ToastUtils.showToast(getApplicationContext(), "Incorrect credentials, try again", false);
+                    }
+
+                } catch (JSONException e) {
+                    Toast.makeText(LoginActivity.this, "Error occurred", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+    };
 }

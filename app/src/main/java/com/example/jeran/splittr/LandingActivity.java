@@ -37,10 +37,6 @@ public class LandingActivity extends AppCompatActivity {
             return;
         }
 
-        firebaseAuth = FirebaseAuth.getInstance();
-
-        final String email = firebaseAuth.getCurrentUser().getEmail().toString();
-
         listView = findViewById(R.id.summaryListView);
 
         dataModels = new ArrayList<>();

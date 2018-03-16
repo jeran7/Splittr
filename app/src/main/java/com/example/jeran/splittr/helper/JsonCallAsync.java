@@ -46,8 +46,8 @@ public class JsonCallAsync extends AsyncTask<Void, Void, String> {
 
     @Override
     protected String doInBackground(Void... params) {
-        Log.d("Splittr","URL => "+requestUrl);
-        Log.d("Splittr","Param => "+requestData);
+        Log.d("Splittr","URL => " + requestUrl);
+        Log.d("Splittr","Param => " + requestData);
         return UtilityMethods.callJsonWS(requestParam, requestData, requestUrl, getOrPost);
     }
 

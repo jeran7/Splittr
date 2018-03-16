@@ -7,7 +7,7 @@ package com.example.jeran.splittr.helper;
 public interface ResponseListener  {
     /**
      * Method used for fetch and display the Login Details.
-     * @param responseBin save all the Deails for Response using the ResponseBin class.
+     * @param responseBin save all the Details for Response using the ResponseBin class.
      */
     public void setOnResponseListener(ResponseBin responseBin);
 

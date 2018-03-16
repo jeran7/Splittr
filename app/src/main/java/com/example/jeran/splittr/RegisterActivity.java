@@ -2,7 +2,9 @@ package com.example.jeran.splittr;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -16,6 +18,7 @@ import com.example.jeran.splittr.helper.JsonCallAsync;
 import com.example.jeran.splittr.helper.LinkUtils;
 import com.example.jeran.splittr.helper.ResponseBin;
 import com.example.jeran.splittr.helper.ResponseListener;
+import com.example.jeran.splittr.helper.ToastUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 
@@ -25,8 +28,8 @@ import org.json.JSONObject;
 public class RegisterActivity extends Activity implements View.OnClickListener {
 
     private Button buttonRegister;
-    private EditText editTextEmail;
-    private EditText editTextPassword;
+    private EditText email;
+    private EditText password;
 
     private EditText firstName;
     private EditText lastName;
@@ -45,10 +48,10 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
         progressDialog = new ProgressDialog(this);
         buttonRegister = findViewById(R.id.buttonRegister);
 
-        editTextEmail = findViewById(R.id.editTextEmail);
-        editTextPassword = findViewById(R.id.editTextPassword);
-        firstName=findViewById(R.id.editTextFname);
-        lastName=findViewById(R.id.editTextLname);
+        email = findViewById(R.id.editTextEmail);
+        password = findViewById(R.id.editTextPassword);
+        firstName = findViewById(R.id.editTextFname);
+        lastName = findViewById(R.id.editTextLname);
 
         textViewSignup = findViewById(R.id.textViewSignin);
         buttonRegister.setOnClickListener(this);
@@ -56,10 +59,10 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
     }
 
     private void registerUser() {
-        final String email = editTextEmail.getText().toString().trim();
-        final String password = editTextPassword.getText().toString().trim();
-        final String fName= firstName.getText().toString().trim();
-        final String lName=lastName.getText().toString().trim();
+        final String email = this.email.getText().toString().trim();
+        final String password = this.password.getText().toString().trim();
+        final String fName = firstName.getText().toString().trim();
+        final String lName = lastName.getText().toString().trim();
 
         if(TextUtils.isEmpty(fName)) {
             firstName.setError("Please enter first name");
@@ -72,12 +75,12 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
         }
 
         if(TextUtils.isEmpty(email)) {
-            editTextEmail.setError("Please enter email");
+            this.email.setError("Please enter email");
             return;
         }
 
         if(TextUtils.isEmpty(password)) {
-            editTextPassword.setError("Please enter password");
+            this.password.setError("Please enter password");
             return;
         }
 
@@ -90,6 +93,7 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
         } catch (JSONException e) {
             Log.d("Splittr", e.toString());
         }
+
         new JsonCallAsync(RegisterActivity.this, "registrationRequest", registrationData.toString(), LinkUtils.REGISTRATION_URL, responseListener, true, "GET").execute();
     }
 
@@ -100,19 +104,38 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
             if (responseBin != null && responseBin.getResponse() != null) {
                 String response = responseBin.getResponse();
                 try {
-                    JSONObject jsonObject=new JSONObject(response);
-                    String result=jsonObject.getString("result");
+                    JSONObject jsonObject = new JSONObject(response);
+                    String result = jsonObject.getString("result");
 
                     if (result.equals("success")) {
-                        Toast.makeText(RegisterActivity.this, "Registered successfully.", Toast.LENGTH_LONG).show();
+
+                        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.putBoolean(getString(R.string.USER_LOGIN), true);
+
+                        String email = jsonObject.getString("email");
+                        String name = jsonObject.getString("name");
+
+                        editor.putString("name", name);
+                        editor.putString("email", email);
+                        editor.commit();
+
+                        ToastUtils.showToast(getApplicationContext(), "Registered successfully", true);
+                        finish();
                         startActivity(new Intent(RegisterActivity.this,LandingActivity.class));
-                    } else if (result.equals("failed")) {
-                        Toast.makeText(RegisterActivity.this, "Registration failed.", Toast.LENGTH_LONG).show();
-                    } else if (result.equals("taken")) {
-                        Toast.makeText(RegisterActivity.this, "User ID already taken. Try agin with different user ID.", Toast.LENGTH_LONG).show();
                     }
-                } catch (JSONException e) {
-                    Toast.makeText(RegisterActivity.this, "Error occurred", Toast.LENGTH_LONG).show();
+
+                    else if (result.equals("failed")) {
+                        ToastUtils.showToast(getApplicationContext(), "Registration failed", false);
+                    }
+
+                    else if (result.equals("taken")) {
+                        ToastUtils.showToast(getApplicationContext(), "A user with this email already exists", false);
+                    }
+                }
+
+                catch (JSONException e) {
+                    Toast.makeText(RegisterActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
                 }
             }
         }
