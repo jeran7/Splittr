@@ -51,16 +51,4 @@
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/splittrTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="24dp"
-        android:text="@string/splittrTitle"
-        android:textColor="@color/splittrGreen"
-        android:textSize="35sp"
-        android:fontFamily="roboto-light"/>
-
 </RelativeLayout>
