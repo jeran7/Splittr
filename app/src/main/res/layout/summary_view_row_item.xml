@@ -3,8 +3,20 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="10dp"
+    android:padding="12dp"
     android:orientation="vertical">
+
+    <com.example.jeran.splittr.helper.CircleImageView
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginRight="8dp"
+        android:gravity="center"
+        android:background="@drawable/ic_account_circle_black_24dp" />
 
     <TextView
         android:id="@+id/friendName"
@@ -13,10 +25,11 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
         android:fontFamily="roboto"
-        android:textSize="18sp"/>
+        android:gravity="center"
+        android:layout_marginLeft="60dp"
+        android:layout_marginStart="60dp"
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/netAmount"
@@ -25,9 +38,10 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:layout_marginEnd="21dp"
-        android:layout_marginRight="21dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
         android:fontFamily="roboto"
-        android:textSize="18sp"/>
+        android:gravity="center"
+        android:textSize="20sp"/>
 
 </RelativeLayout>
