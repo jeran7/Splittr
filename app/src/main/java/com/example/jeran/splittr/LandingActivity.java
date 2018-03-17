@@ -4,12 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -20,6 +22,7 @@ import java.util.ArrayList;
 /* This is the activity where the users can see his expense. */
 
 public class LandingActivity extends AppCompatActivity {
+    private static boolean doubleBackToExitPressedOnce = false;
     FirebaseAuth firebaseAuth;
     DatabaseReference db;
 
@@ -81,5 +84,31 @@ public class LandingActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+//        if (drawer.isDrawerOpen(GravityCompat.START)) {
+//            drawer.closeDrawer(GravityCompat.START);
+//        } else {
+
+        if (LandingActivity.doubleBackToExitPressedOnce) {
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            startActivity(intent);
+        }else{
+            LandingActivity.doubleBackToExitPressedOnce = true;
+
+            Toast.makeText(LandingActivity.this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    LandingActivity.doubleBackToExitPressedOnce = false;
+                }
+            }, 3000);
+        }
+//        }
     }
 }
