@@ -36,6 +36,6 @@
     <string name="enterBillDescription">Description</string>
     <string name="enterBillAmount">Amount</string>
     <string name="shareBillWith">Share with</string>
-    <string name="doneSplitting">Split!</string>
+    <string name="doneSplitting">Split</string>
 
 </resources>

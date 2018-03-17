@@ -1,9 +1,5 @@
 package com.example.jeran.splittr.helper;
 
-/**
- * Created by dmevada on 3/15/18.
- */
-
 public class LinkUtils {
 
     // This URL changes based on where your server is
@@ -18,6 +14,7 @@ public class LinkUtils {
     public static final String LOGIN_URL = wsLink + "login.php";
     public static final String LIST_USERS_URL = wsLink + "listUsers.php";
     public static final String ADD_FRIENDS_URL = wsLink + "addFriend.php";
+    public static final String LIST_FRIENDS_URL = wsLink + "listFriends.php";
 
 
 }

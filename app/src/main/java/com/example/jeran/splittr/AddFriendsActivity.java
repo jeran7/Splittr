@@ -57,12 +57,12 @@ public class AddFriendsActivity extends AppCompatActivity implements AdapterView
         sharedPreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
         email = sharedPreferences.getString(getString(R.string.USER_EMAIL), "");
 
-        JSONObject registrationData = new JSONObject();
+        JSONObject listUsersObject = new JSONObject();
 
         try
         {
-            registrationData.put("email", email);
-            registrationData.put("includeSelf", true);
+            listUsersObject.put("email", email);
+            listUsersObject.put("includeSelf", true);
         }
 
         catch (JSONException e)
@@ -70,7 +70,7 @@ public class AddFriendsActivity extends AppCompatActivity implements AdapterView
             Log.d("Splittr", e.toString());
         }
 
-        new JsonCallAsync(AddFriendsActivity.this, "listUsersRequest", registrationData.toString(), LinkUtils.LIST_USERS_URL, responseListener, true, "GET").execute();
+        new JsonCallAsync(AddFriendsActivity.this, "listUsersRequest", listUsersObject.toString(), LinkUtils.LIST_USERS_URL, responseListener, true, "GET").execute();
     }
 
     private TextWatcher queryWatcher = new TextWatcher() {
