@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@color/splittrBlue"
-        android:text="Done"
+        android:text="@string/doneSplitting"
         android:textColor="@color/white" />
 
     <LinearLayout
@@ -23,14 +23,14 @@
             android:id="@+id/billTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter description"
+            android:hint="@string/enterBillDescription"
             android:textSize="@dimen/large_font" />
 
         <EditText
             android:id="@+id/billAmount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter amount here"
+            android:hint="@string/enterBillAmount"
             android:textSize="@dimen/large_font" />
     </LinearLayout>
 
@@ -42,7 +42,7 @@
         android:layout_marginBottom="@dimen/activity_horizontal_margin"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:text="Share this bill with..."
+        android:text="@string/shareBillWith"
         android:textSize="@dimen/large_font" />
 
     <ListView

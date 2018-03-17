@@ -43,6 +43,8 @@ public class AddFriendsActivity extends AppCompatActivity implements AdapterView
     private ArrayList<String> filteredFriendsList = new ArrayList<>();
     ArrayAdapter<String> arrayAdapter;
     private HashMap<String, String> friends = new HashMap<>();
+    private SharedPreferences sharedPreferences;
+    private String email = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +54,8 @@ public class AddFriendsActivity extends AppCompatActivity implements AdapterView
         searchQuery = (EditText) findViewById(R.id.searchQuery);
         searchQueryList = (ListView) findViewById(R.id.searchResultList);
 
-        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
-        final String email = sharedPreferences.getString(getString(R.string.USER_EMAIL), "");
+        sharedPreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
+        email = sharedPreferences.getString(getString(R.string.USER_EMAIL), "");
 
         JSONObject registrationData = new JSONObject();
 
@@ -73,14 +75,10 @@ public class AddFriendsActivity extends AppCompatActivity implements AdapterView
 
     private TextWatcher queryWatcher = new TextWatcher() {
         @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-        }
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
         @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-        }
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
         @Override
         public void afterTextChanged(Editable editable) {
@@ -114,8 +112,21 @@ public class AddFriendsActivity extends AppCompatActivity implements AdapterView
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
-                        Toast.makeText(AddFriendsActivity.this, "Added '"+selectedFriend+"" +
-                                "' as friend successfully", Toast.LENGTH_LONG).show();
+
+                        JSONObject addFriendData = new JSONObject();
+
+                        try
+                        {
+                            addFriendData.put("email", email);
+                            addFriendData.put("friend", friends.get(selectedFriend));
+                        }
+
+                        catch (JSONException e)
+                        {
+                            Log.d("Splittr", e.toString());
+                        }
+
+                        new JsonCallAsync(AddFriendsActivity.this, "addFriendRequest", addFriendData.toString(), LinkUtils.ADD_FRIENDS_URL, addFriendListener, true, "GET").execute();
                         break;
 
                     case DialogInterface.BUTTON_NEGATIVE:
@@ -151,14 +162,11 @@ public class AddFriendsActivity extends AppCompatActivity implements AdapterView
                             String email = users.getJSONObject(i).getString("email");
 
                             friends.put(name, email);
-                            ToastUtils.showToast(getApplicationContext(), "name: " + friends.size(), true);
                         }
 
                         for (String friend : friends.keySet()) {
                             filteredFriendsList.add(friend);
                         }
-
-                        ToastUtils.showToast(getApplicationContext(), "filteredFriends size:  " + filteredFriendsList.size(), true);
 
                         arrayAdapter = new ArrayAdapter<String>(AddFriendsActivity.this, android.R.layout.simple_list_item_1, filteredFriendsList);
                         searchQueryList.setAdapter(arrayAdapter);
@@ -173,6 +181,36 @@ public class AddFriendsActivity extends AppCompatActivity implements AdapterView
                 }
 
                 catch (JSONException e) {
+                    Toast.makeText(AddFriendsActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    };
+
+    ResponseListener addFriendListener = new ResponseListener() {
+        @Override
+        public void setOnResponseListener(ResponseBin responseBin) {
+            if (responseBin != null && responseBin.getResponse() != null) {
+                String response = responseBin.getResponse();
+
+                try
+                {
+                    JSONObject jsonObject = new JSONObject(response);
+                    String result = jsonObject.getString("result");
+
+                    if(result.equals("success"))
+                    {
+                        ToastUtils.showToast(getApplicationContext(), "Added friend successfully", true);
+                    }
+
+                    else if (result.equals("isFriendAlready"))
+                    {
+                        ToastUtils.showToast(getApplicationContext(), "Already a friend", false);
+                    }
+                }
+
+                catch(JSONException error)
+                {
                     Toast.makeText(AddFriendsActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
                 }
             }
