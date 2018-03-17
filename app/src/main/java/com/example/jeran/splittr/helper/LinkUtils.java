@@ -15,6 +15,7 @@ public class LinkUtils {
     public static final String LIST_USERS_URL = wsLink + "listUsers.php";
     public static final String ADD_FRIENDS_URL = wsLink + "addFriend.php";
     public static final String LIST_FRIENDS_URL = wsLink + "listFriends.php";
+    public static final String ADD_ITEM_URL = wsLink + "addItem.php";
     public static final String GET_SUMMARY_URL = wsLink + "getSummary.php";
 
 

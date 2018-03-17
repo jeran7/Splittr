@@ -1,18 +1,18 @@
 package com.example.jeran.splittr;
 
-import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
@@ -29,8 +29,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class EnterBillActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
 
@@ -43,7 +41,8 @@ public class EnterBillActivity extends AppCompatActivity implements View.OnClick
     private String email = "";
 
     ArrayList<String> selectedFriends;
-    int checkedCount = 0;
+    private ArrayList<String> checkedEmails;
+    private ArrayList<HashMap<String, String>> arrayList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,8 +54,7 @@ public class EnterBillActivity extends AppCompatActivity implements View.OnClick
         friendsList = findViewById(R.id.friendsList);
         addBillButton = findViewById(R.id.addBillButton);
 
-
-
+        checkedEmails = new ArrayList<>();
         sharedPreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
         email = sharedPreferences.getString(getString(R.string.USER_EMAIL), "");
 
@@ -81,28 +79,47 @@ public class EnterBillActivity extends AppCompatActivity implements View.OnClick
         switch (view.getId())
         {
             case R.id.addBillButton:
-                if(checkedCount == 0)
+                if(checkedEmails.size() == 0)
                 {
                     ToastUtils.showToast(getApplicationContext(),"Please select atleast 1 friend", false);
-                }
-
-                else
+                } else if(TextUtils.isEmpty(billTitle.getText().toString())){
+                    billTitle.setError("Please enter the description");
+                } else if(TextUtils.isEmpty(billAmount.getText().toString())){
+                    billAmount.setError("Please enter the amount");
+                } else
                 {
-                    ToastUtils.showToast(getApplicationContext(),"Finished splitting bill", true);
+                    StringBuilder sb = new StringBuilder();
+                    for (int i=0; i<checkedEmails.size(); i++){
+                        sb.append(checkedEmails.get(i));
+                        if((i+1)!=checkedEmails.size()){
+                            sb.append(",");
+                        }
+                    }
+
+                    JSONObject addItemJSONObject = new JSONObject();
+
+                    try
+                    {
+                        addItemJSONObject.put("owner", email);
+                        addItemJSONObject.put("lenter", sb.toString());
+                        addItemJSONObject.put("itemName", billTitle.getText().toString().trim());
+                        addItemJSONObject.put("itemCost", Double.valueOf(billAmount.getText().toString().trim()));
+                    }
+
+                    catch (JSONException e)
+                    {
+                        Log.d("Splittr", e.toString());
+                    }
+
+                    new JsonCallAsync(EnterBillActivity.this, "addItemRequest", addItemJSONObject.toString(), LinkUtils.ADD_ITEM_URL, addItemResponseListener, true, "GET").execute();
                 }
 
                 break;
         }
     }
 
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
-    {
-        String name = friendsList.getAdapter().getItem(i).toString();
-        selectedFriends.add(i, name);
-        checkedCount++;
-    }
-
     ResponseListener responseListener = new ResponseListener() {
+
         @Override
         public void setOnResponseListener(ResponseBin responseBin) {
             if (responseBin != null && responseBin.getResponse() != null)
@@ -126,7 +143,7 @@ public class EnterBillActivity extends AppCompatActivity implements View.OnClick
 
                         else
                         {
-                            ArrayList<HashMap<String,String>> arrayList = new ArrayList<>();
+                            arrayList = new ArrayList<>();
 
                             for(int i = 0; i < friends.length(); i++)
                             {
@@ -147,9 +164,8 @@ public class EnterBillActivity extends AppCompatActivity implements View.OnClick
 
                             SimpleAdapter adapter = new SimpleAdapter(EnterBillActivity.this, arrayList, R.layout.friends_list_row_item, from, to);
                             friendsList.setAdapter(adapter);
-                            addBillButton.setOnClickListener(EnterBillActivity.this);
-
                             friendsList.setOnItemClickListener(EnterBillActivity.this);
+                            addBillButton.setOnClickListener(EnterBillActivity.this);
                         }
                     }
 
@@ -166,4 +182,53 @@ public class EnterBillActivity extends AppCompatActivity implements View.OnClick
             }
         }
     };
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        String email = arrayList.get(position).get("email");
+        CheckBox checkBox = (CheckBox)view.findViewById(R.id.checkboxFriendsList);
+        checkBox.setChecked(!checkBox.isChecked());
+
+        if(checkBox.isChecked()){
+            if(!checkedEmails.contains(email)){
+                checkedEmails.add(email);
+            }
+        }else{
+            if(checkedEmails.contains(email)){
+                checkedEmails.remove(email);
+            }
+        }
+    }
+
+    private ResponseListener addItemResponseListener = new ResponseListener() {
+        @Override
+        public void setOnResponseListener(ResponseBin responseBin) {
+            if (responseBin != null && responseBin.getResponse() != null)
+            {
+                String response = responseBin.getResponse();
+
+                try
+                {
+                    JSONObject jsonObject = new JSONObject(response);
+                    String result = jsonObject.getString("result");
+
+                    if(result.equals("success"))
+                    {
+                        ToastUtils.showToast(getApplicationContext(),"'"+billTitle.getText().toString().trim()+"' splitted successfully", true);
+                        startActivity(new Intent(EnterBillActivity.this, LandingActivity.class));
+                    }
+                    else if (result.equals("failed"))
+                    {
+                        ToastUtils.showToast(getApplicationContext(), "Error splitting the item", false);
+                    }
+                }
+
+                catch(JSONException error)
+                {
+                    ToastUtils.showToast(getApplicationContext(), "Error occured", false);
+                }
+            }
+        }
+    };
+
 }
