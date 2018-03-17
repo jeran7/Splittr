@@ -1,16 +1,20 @@
 package com.example.jeran.splittr;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -19,8 +23,6 @@ import com.example.jeran.splittr.helper.LinkUtils;
 import com.example.jeran.splittr.helper.ResponseBin;
 import com.example.jeran.splittr.helper.ResponseListener;
 import com.example.jeran.splittr.helper.ToastUtils;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,14 +33,12 @@ import java.util.ArrayList;
 
 /* This is the activity where the users can see his expense. */
 
-public class LandingActivity extends AppCompatActivity implements View.OnClickListener {
+public class LandingActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
     private static boolean doubleBackToExitPressedOnce = false;
-    FirebaseAuth firebaseAuth;
-    DatabaseReference db;
 
     ArrayList<SummaryListViewDataModel> dataModels;
     ListView listView;
-    private static SummaryListViewAdapter adapter;
+    private SummaryListViewAdapter adapter;
 
     private SharedPreferences sharedPreferences;
     private String email = "";
@@ -54,12 +54,19 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
         }
 
         FloatingActionButton fb = findViewById(R.id.fab);
-        listView = findViewById(R.id.summaryListView);
+        listView = (ListView) findViewById(R.id.summaryListView);
 
         sharedPreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
         email = sharedPreferences.getString(getString(R.string.USER_EMAIL), "");
         fb.setOnClickListener(this);
 
+        dataModels = new ArrayList<>();
+        adapter = new SummaryListViewAdapter(dataModels, getApplicationContext());
+        listView.setAdapter(adapter);
+        loadSummary();
+    }
+
+    private void loadSummary() {
         JSONObject getSummaryObject = new JSONObject();
 
         try
@@ -149,19 +156,20 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
 
                     if(result.equals("success"))
                     {
+                        dataModels.clear();
                         JSONArray users = jsonObject.getJSONArray("users");
-                        dataModels = new ArrayList<>();
 
                         for(int i = 0; i < users.length(); i++)
                         {
                             String name = users.getJSONObject(i).getString("name");
                             double amount = users.getJSONObject(i).getDouble("amount");
+                            String email = users.getJSONObject(i).getString("email");
 
-                            dataModels.add(new SummaryListViewDataModel(name, amount));
+                            dataModels.add(new SummaryListViewDataModel(name, amount, email));
                         }
 
-                        adapter = new SummaryListViewAdapter(dataModels, getApplicationContext());
-                        listView.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
+                        listView.setOnItemClickListener(LandingActivity.this);
                     }
 
                     else if(result.equals("failed"))
@@ -177,4 +185,71 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
             }
         }
     };
+
+    private void showDialogForSelectedFriend(final String selectedFriend) {
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
+
+                        JSONObject settleUpData = new JSONObject();
+
+                        try
+                        {
+                            settleUpData.put("email", email);
+                            settleUpData.put("friend", selectedFriend);
+                        }
+
+                        catch (JSONException e)
+                        {
+                            Log.d("Splittr", e.toString());
+                        }
+
+                        new JsonCallAsync(LandingActivity.this, "settleUpRequest", settleUpData.toString(), LinkUtils.SETTLE_UP_URL, settleUpListener, true, "GET").execute();
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder
+                .setMessage(Html.fromHtml("<b>"+selectedFriend+"</b><br>"+selectedFriend))
+                .setPositiveButton("Settle Up", dialogClickListener)
+                .setNegativeButton("Cancel", dialogClickListener).show();
+    }
+
+    private ResponseListener settleUpListener = new ResponseListener() {
+        @Override
+        public void setOnResponseListener(ResponseBin responseBin) {
+            if (responseBin != null && responseBin.getResponse() != null) {
+                String response = responseBin.getResponse();
+                try
+                {
+                    JSONObject jsonObject = new JSONObject(response);
+                    String result = jsonObject.getString("result");
+
+                    if (result.equals("success")) {
+                        ToastUtils.showToast(LandingActivity.this, "Successfully settled up", true);
+                        loadSummary();
+                    }
+
+                    else if (result.equals("failed")) {
+                        ToastUtils.showToast(LandingActivity.this, "Failed to settle up", false);
+                    }
+
+                } catch (JSONException e) {
+                    Toast.makeText(LandingActivity.this, "Error occurred", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+    };
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        showDialogForSelectedFriend(adapter.getItem(position).getEmail());
+    }
 }

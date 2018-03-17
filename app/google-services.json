@@ -1,27 +1,35 @@
 {
   "project_info": {
-    "project_number": "827344443368",
-    "firebase_url": "https://splittr-fa1be.firebaseio.com",
-    "project_id": "splittr-fa1be",
-    "storage_bucket": "splittr-fa1be.appspot.com"
+    "project_number": "679296330870",
+    "firebase_url": "https://splittr-837dc.firebaseio.com",
+    "project_id": "splittr-837dc",
+    "storage_bucket": "splittr-837dc.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:827344443368:android:1a89cd4eeef2bf7e",
+        "mobilesdk_app_id": "1:679296330870:android:1a89cd4eeef2bf7e",
         "android_client_info": {
           "package_name": "com.example.jeran.splittr"
         }
       },
       "oauth_client": [
         {
-          "client_id": "827344443368-35vihibqrcobqcde53jum1aceaec46jk.apps.googleusercontent.com",
+          "client_id": "679296330870-mt5uipl6ar9pffg1br45c031f3dtdj0p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.jeran.splittr",
+            "certificate_hash": "d98623776ee588f118e71dda477dab7884d0b5db"
+          }
+        },
+        {
+          "client_id": "679296330870-bgbl282d9l1ob0p1qvi9uua94jedhako.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAbqd34XGfa7p2QzH98DG7nu-CA448_yo0"
+          "current_key": "AIzaSyAJBfCMZqdjGHkTOdw1obz1fsH7wZlbpyE"
         }
       ],
       "services": {
@@ -29,8 +37,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "679296330870-bgbl282d9l1ob0p1qvi9uua94jedhako.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2

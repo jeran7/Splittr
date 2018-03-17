@@ -19,6 +19,7 @@ import com.example.jeran.splittr.helper.LinkUtils;
 import com.example.jeran.splittr.helper.ResponseBin;
 import com.example.jeran.splittr.helper.ResponseListener;
 import com.example.jeran.splittr.helper.ToastUtils;
+import com.example.jeran.splittr.helper.UtilityMethods;
 import com.google.firebase.auth.FirebaseAuth;
 
 import org.json.JSONException;
@@ -86,7 +87,6 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         {
             loginData.put("email", email);
             loginData.put("password", password);
-            loginData.put("gcmToken", LinkUtils.gcmToken);
         }
 
         catch (JSONException e) {
@@ -108,13 +108,16 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                     String result = jsonObject.getString("result");
 
                     if (result.equals("success")) {
+
                         SharedPreferences sharedPref = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPref.edit();
                         editor.putBoolean(getString(R.string.USER_LOGIN), true);
 
                         String email = jsonObject.getString("email");
                         String name = jsonObject.getString("name");
+                        String token = sharedPref.getString(getString(R.string.GCM_TOKEN), null);
 
+                        UtilityMethods.sendRegistrationToServer(LoginActivity.this, email, token);
                         editor.putString(getString(R.string.USER_NAME), name);
                         editor.putString(getString(R.string.USER_EMAIL), email);
                         editor.commit();

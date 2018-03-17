@@ -1,7 +1,6 @@
 package com.example.jeran.splittr;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,8 +18,7 @@ import com.example.jeran.splittr.helper.LinkUtils;
 import com.example.jeran.splittr.helper.ResponseBin;
 import com.example.jeran.splittr.helper.ResponseListener;
 import com.example.jeran.splittr.helper.ToastUtils;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
+import com.example.jeran.splittr.helper.UtilityMethods;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,17 +33,11 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
     private EditText lastName;
     private TextView textViewSignup;
 
-    private ProgressDialog progressDialog;
-    private FirebaseAuth firebaseAuth;
-    private DatabaseReference userDB;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        firebaseAuth =  FirebaseAuth.getInstance();
-        progressDialog = new ProgressDialog(this);
         buttonRegister = findViewById(R.id.buttonRegister);
 
         email = findViewById(R.id.editTextEmail);
@@ -64,22 +56,22 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
         final String fName = firstName.getText().toString().trim();
         final String lName = lastName.getText().toString().trim();
 
-        if(TextUtils.isEmpty(fName)) {
+        if (TextUtils.isEmpty(fName)) {
             firstName.setError("Please enter first name");
             return;
         }
 
-        if(TextUtils.isEmpty(lName)) {
+        if (TextUtils.isEmpty(lName)) {
             lastName.setError("Please enter last name");
             return;
         }
 
-        if(TextUtils.isEmpty(email)) {
+        if (TextUtils.isEmpty(email)) {
             this.email.setError("Please enter email");
             return;
         }
 
-        if(TextUtils.isEmpty(password)) {
+        if (TextUtils.isEmpty(password)) {
             this.password.setError("Please enter password");
             return;
         }
@@ -117,25 +109,22 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
                         String email = jsonObject.getString("email");
                         String name = jsonObject.getString("name");
 
+                        String token = sharedPref.getString(getString(R.string.GCM_TOKEN), null);
+                        UtilityMethods.sendRegistrationToServer(RegisterActivity.this, email, token);
+
                         editor.putString(getString(R.string.USER_NAME), name);
                         editor.putString(getString(R.string.USER_EMAIL), email);
                         editor.commit();
 
                         ToastUtils.showToast(getApplicationContext(), "Registered successfully", true);
                         finish();
-                        startActivity(new Intent(RegisterActivity.this,LandingActivity.class));
-                    }
-
-                    else if (result.equals("failed")) {
+                        startActivity(new Intent(RegisterActivity.this, LandingActivity.class));
+                    } else if (result.equals("failed")) {
                         ToastUtils.showToast(getApplicationContext(), "Registration failed", false);
-                    }
-
-                    else if (result.equals("taken")) {
+                    } else if (result.equals("taken")) {
                         ToastUtils.showToast(getApplicationContext(), "A user with this email already exists", false);
                     }
-                }
-
-                catch (JSONException e) {
+                } catch (JSONException e) {
                     Toast.makeText(RegisterActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -145,12 +134,12 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View view) {
 
-        if(view == buttonRegister) {
+        if (view == buttonRegister) {
             registerUser();
         }
 
-        if(view == textViewSignup) {
-            startActivity(new Intent(this,LoginActivity.class));
+        if (view == textViewSignup) {
+            startActivity(new Intent(this, LoginActivity.class));
         }
     }
 }

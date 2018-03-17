@@ -37,5 +37,7 @@
     <string name="enterBillAmount">Amount</string>
     <string name="shareBillWith">Share with</string>
     <string name="doneSplitting">Split</string>
+    <string name="default_notification_channel_id">default notification channel</string>
+    <string name="GCM_TOKEN">GCM Token</string>
 
 </resources>
