@@ -5,7 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -38,6 +41,7 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
+        animateText();
         buttonRegister = findViewById(R.id.buttonRegister);
 
         email = findViewById(R.id.editTextEmail);
@@ -48,6 +52,15 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
         textViewSignup = findViewById(R.id.textViewSignin);
         buttonRegister.setOnClickListener(this);
         textViewSignup.setOnClickListener(this);
+    }
+
+    private void animateText() {
+        TextView splashScreenText = (TextView) findViewById(R.id.splittrTitle);
+        String str = "$ p l i t t r";
+        String tempStr = str.substring(0, 1).toUpperCase() + str.substring(1);
+        SpannableString spannableString = new SpannableString(tempStr);
+        spannableString.setSpan(new RelativeSizeSpan(2f), 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        splashScreenText.setText(spannableString);
     }
 
     private void registerUser() {

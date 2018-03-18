@@ -1,7 +1,6 @@
 package com.example.jeran.splittr.helper;
 
 public class LinkUtils {
-
     // This URL changes based on where your server is
     // For AWS server it will be the link to your AWS EC2 instance
     // For localhost it will be your IPv4 address.
@@ -17,5 +16,6 @@ public class LinkUtils {
     public static final String ADD_ITEM_URL = wsLink + "addItem.php";
     public static final String GET_SUMMARY_URL = wsLink + "getSummary.php";
     public static final String SETTLE_UP_URL = wsLink + "settleUp.php";
-    public static final String SAVE_GCM_TOKEN_URL = wsLink + "saveGcmToken.php";;
+    public static final String SAVE_GCM_TOKEN_URL = wsLink + "saveGcmToken.php";
+    public static final String DELETE_TOKEN_URL = wsLink + "deleteGcmToken.php";
 }

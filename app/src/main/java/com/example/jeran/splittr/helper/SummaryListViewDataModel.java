@@ -1,4 +1,4 @@
-package com.example.jeran.splittr;
+package com.example.jeran.splittr.helper;
 
 /**
  * Diksha Jaiswal

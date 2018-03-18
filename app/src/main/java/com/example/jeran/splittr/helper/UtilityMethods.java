@@ -1,6 +1,8 @@
 package com.example.jeran.splittr.helper;
 
 import android.content.Context;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -80,5 +82,17 @@ public class UtilityMethods {
             }
         };
         new JsonCallAsync(context, "saveGcmTokenRequest", tokenData.toString(), LinkUtils.SAVE_GCM_TOKEN_URL, responseListener, false, "GET").execute();
+    }
+
+
+    public static void insertFragment(Fragment fragment, int container, FragmentActivity activity) {
+        // TODO Auto-generated method stub
+
+        if (fragment != null) {
+            activity.getSupportFragmentManager().beginTransaction()
+                    .replace(container, fragment)
+                    .commit();
+        }
+
     }
 }

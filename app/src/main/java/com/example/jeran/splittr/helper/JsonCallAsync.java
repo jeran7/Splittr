@@ -59,7 +59,7 @@ public class JsonCallAsync extends AsyncTask<Void, Void, String> {
             progressDialog.cancel();
         }
 
-        Log.d("Splittr", result.toString());
+        Log.d("Splittr", "Response[" + requestParam+ "] ===> " + result);
 
         responseBin.setResponse(result);
         responseListener.setOnResponseListener(responseBin);

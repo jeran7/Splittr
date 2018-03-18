@@ -1,4 +1,4 @@
-package com.example.jeran.splittr;
+package com.example.jeran.splittr.helper;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import com.example.jeran.splittr.R;
 
 import java.util.ArrayList;
 

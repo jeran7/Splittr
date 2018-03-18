@@ -13,42 +13,6 @@
         android:shadowDx="0"
         android:shadowDy="0"
         android:shadowRadius="2"
-        android:text="Splittr"
         android:textColor="@android:color/white"
         android:textSize="40sp" />
-    <!--<ImageView
-        android:id="@+id/splashScreenImage"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:src="@drawable/splittr_logo" />
--->
-
-    <!--<RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_centerInParent="true">
-
-        <TextView
-            android:id="@+id/splashScreenDollarSign"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="$"
-            android:textColor="@android:color/white"
-            android:textSize="120sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/splashScreenDollarSign"
-            android:layout_centerInParent="true"
-            android:layout_toRightOf="@id/splashScreenDollarSign"
-            android:text="p l i t t r"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/very_large_font"
-            android:textStyle="bold" />
-    </RelativeLayout>-->
 </RelativeLayout>

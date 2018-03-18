@@ -6,7 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -20,7 +23,6 @@ import com.example.jeran.splittr.helper.ResponseBin;
 import com.example.jeran.splittr.helper.ResponseListener;
 import com.example.jeran.splittr.helper.ToastUtils;
 import com.example.jeran.splittr.helper.UtilityMethods;
-import com.google.firebase.auth.FirebaseAuth;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,15 +34,14 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     private EditText password;
     private TextView textViewSignUp;
     private ProgressDialog progressDialog;
-    private FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        firebaseAuth = FirebaseAuth.getInstance();
 
+        animateText();
         password = findViewById(R.id.editTextPassword);
         email = findViewById(R.id.editTextEmail);
         buttonLogin = findViewById(R.id.buttonLogin);
@@ -51,15 +52,24 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         progressDialog = new ProgressDialog(this);
     }
 
+    private void animateText() {
+        TextView splashScreenText = (TextView) findViewById(R.id.splittrTitle);
+        String str = "$ p l i t t r";
+        String tempStr = str.substring(0, 1).toUpperCase() + str.substring(1);
+        SpannableString spannableString = new SpannableString(tempStr);
+        spannableString.setSpan(new RelativeSizeSpan(2f), 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        splashScreenText.setText(spannableString);
+    }
+
     @Override
     public void onClick(View view) {
-        if(view == buttonLogin) {
+        if (view == buttonLogin) {
             userLogin();
         }
 
-        if(view == textViewSignUp) {
+        if (view == textViewSignUp) {
             finish();
-            startActivity(new Intent(this,RegisterActivity.class));
+            startActivity(new Intent(this, RegisterActivity.class));
         }
     }
 
@@ -68,12 +78,12 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         final String email = this.email.getText().toString().trim();
         final String password = this.password.getText().toString().trim();
 
-        if(TextUtils.isEmpty(email)){
+        if (TextUtils.isEmpty(email)) {
             this.email.setError("Please enter email");
             return;
         }
 
-        if(TextUtils.isEmpty(password)){
+        if (TextUtils.isEmpty(password)) {
             this.password.setError("Please enter password");
             return;
         }
@@ -83,13 +93,10 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
         JSONObject loginData = new JSONObject();
 
-        try
-        {
+        try {
             loginData.put("email", email);
             loginData.put("password", password);
-        }
-
-        catch (JSONException e) {
+        } catch (JSONException e) {
             Log.d("Splittr", e.toString());
         }
 
@@ -102,8 +109,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
             if (responseBin != null && responseBin.getResponse() != null) {
                 String response = responseBin.getResponse();
-                try
-                {
+                try {
                     JSONObject jsonObject = new JSONObject(response);
                     String result = jsonObject.getString("result");
 
@@ -124,9 +130,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
                         finish();
                         startActivity(new Intent(LoginActivity.this, LandingActivity.class));
-                    }
-
-                    else if (result.equals("failed")) {
+                    } else if (result.equals("failed")) {
                         progressDialog.cancel();
                         ToastUtils.showToast(getApplicationContext(), "Incorrect credentials, try again", false);
                     }
