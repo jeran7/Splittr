@@ -92,10 +92,10 @@ public class LandingFragment extends Fragment implements AdapterView.OnItemClick
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        showDialogForSelectedFriend(adapter.getItem(position).getFriendName());
+        showDialogForSelectedFriend(adapter.getItem(position).getFriendName(), adapter.getItem(position).getEmail());
     }
 
-    private void showDialogForSelectedFriend(final String selectedFriend) {
+    private void showDialogForSelectedFriend(String selectedFriend,final String selectedFriendEmail) {
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -106,7 +106,7 @@ public class LandingFragment extends Fragment implements AdapterView.OnItemClick
 
                         try {
                             settleUpData.put("email", LandingActivity.email);
-                            settleUpData.put("friend", selectedFriend);
+                            settleUpData.put("friend", selectedFriendEmail);
                         } catch (JSONException e) {
                             Log.d("Splittr", e.toString());
                         }
