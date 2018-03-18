@@ -2,21 +2,18 @@ package com.example.jeran.splittr;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -25,14 +22,12 @@ import com.example.jeran.splittr.helper.LinkUtils;
 import com.example.jeran.splittr.helper.ResponseBin;
 import com.example.jeran.splittr.helper.ResponseListener;
 import com.example.jeran.splittr.helper.ToastUtils;
-import com.google.api.client.json.JsonString;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -137,6 +132,7 @@ public class AddFriendsActivity extends AppCompatActivity implements AdapterView
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder
+                .setTitle("Add Friend")
                 .setMessage(Html.fromHtml("<b>"+selectedFriend+"</b><br>"+friends.get(selectedFriend)))
                 .setPositiveButton("Add", dialogClickListener)
                 .setNegativeButton("Cancel", dialogClickListener).show();

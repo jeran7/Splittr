@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.jeran.splittr.helper.JsonCallAsync;
@@ -28,6 +29,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 
@@ -42,19 +45,18 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
 
     private SharedPreferences sharedPreferences;
     private String email = "";
+    private TextView currentUserName;
+    private TextView currentUserBalance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing);
 
-        if (!isUserLoggedIn()) {
-            startActivity(new Intent(LandingActivity.this, LaunchActivity.class));
-            return;
-        }
-
         FloatingActionButton fb = findViewById(R.id.fab);
         listView = (ListView) findViewById(R.id.summaryListView);
+        currentUserName = (TextView) findViewById(R.id.currentUserName);
+        currentUserBalance = (TextView) findViewById(R.id.currentUserBalance);
 
         sharedPreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
         email = sharedPreferences.getString(getString(R.string.USER_EMAIL), "");
@@ -67,24 +69,17 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void loadSummary() {
+
+        currentUserName.setText(getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE).getString("name", null));
         JSONObject getSummaryObject = new JSONObject();
 
-        try
-        {
+        try {
             getSummaryObject.put("email", email);
-        }
-
-        catch (JSONException e)
-        {
+        } catch (JSONException e) {
             Log.d("Splittr", e.toString());
         }
 
         new JsonCallAsync(LandingActivity.this, "getSummaryRequest", getSummaryObject.toString(), LinkUtils.GET_SUMMARY_URL, responseListener, true, "GET").execute();
-    }
-
-    private boolean isUserLoggedIn() {
-        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
-        return sharedPreferences.getBoolean(getString(R.string.USER_LOGIN), false);
     }
 
     @Override
@@ -116,7 +111,7 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
             Intent intent = new Intent(Intent.ACTION_MAIN);
             intent.addCategory(Intent.CATEGORY_HOME);
             startActivity(intent);
-        }else{
+        } else {
             LandingActivity.doubleBackToExitPressedOnce = true;
 
             Toast.makeText(LandingActivity.this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
@@ -134,8 +129,7 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onClick(View view) {
-        switch(view.getId())
-        {
+        switch (view.getId()) {
             case R.id.fab:
                 Intent intent = new Intent(getApplicationContext(), AddBillActivity.class);
                 startActivity(intent);
@@ -149,37 +143,41 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
             if (responseBin != null && responseBin.getResponse() != null) {
                 String response = responseBin.getResponse();
 
-                try
-                {
+                try {
                     JSONObject jsonObject = new JSONObject(response);
                     String result = jsonObject.getString("result");
 
-                    if(result.equals("success"))
-                    {
+                    if (result.equals("success")) {
+                        double netBalance = 0;
                         dataModels.clear();
                         JSONArray users = jsonObject.getJSONArray("users");
 
-                        for(int i = 0; i < users.length(); i++)
-                        {
+                        for (int i = 0; i < users.length(); i++) {
                             String name = users.getJSONObject(i).getString("name");
                             double amount = users.getJSONObject(i).getDouble("amount");
                             String email = users.getJSONObject(i).getString("email");
+                            netBalance += amount;
 
                             dataModels.add(new SummaryListViewDataModel(name, amount, email));
                         }
 
                         adapter.notifyDataSetChanged();
                         listView.setOnItemClickListener(LandingActivity.this);
-                    }
 
-                    else if(result.equals("failed"))
-                    {
-                        ToastUtils.showToast(getApplicationContext(), "Couldn't retrieve summary",false);
+                        DecimalFormat df = new DecimalFormat("#.##");
+                        df.setRoundingMode(RoundingMode.CEILING);
+                        if (netBalance < 0) {
+                            currentUserBalance.setTextColor(getResources().getColor(R.color.owes));
+                            currentUserBalance.setText("You owe\n$" + df.format(Math.abs(netBalance)));
+                        } else if (netBalance > 0) {
+                            currentUserBalance.setText("You lent\n$" + df.format(Math.abs(netBalance)));
+                        } else {
+                            currentUserBalance.setText("You're\nsettled up");
+                        }
+                    } else if (result.equals("failed")) {
+                        ToastUtils.showToast(getApplicationContext(), "Couldn't retrieve summary", false);
                     }
-                }
-
-                catch(JSONException e)
-                {
+                } catch (JSONException e) {
                     Toast.makeText(LandingActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -195,14 +193,10 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
 
                         JSONObject settleUpData = new JSONObject();
 
-                        try
-                        {
+                        try {
                             settleUpData.put("email", email);
                             settleUpData.put("friend", selectedFriend);
-                        }
-
-                        catch (JSONException e)
-                        {
+                        } catch (JSONException e) {
                             Log.d("Splittr", e.toString());
                         }
 
@@ -217,7 +211,8 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder
-                .setMessage(Html.fromHtml("<b>"+selectedFriend+"</b><br>"+selectedFriend))
+                .setTitle("Settle Up")
+                .setMessage(Html.fromHtml("Are you sure you want to settle up with <b>" + selectedFriend + "</b>?"))
                 .setPositiveButton("Settle Up", dialogClickListener)
                 .setNegativeButton("Cancel", dialogClickListener).show();
     }
@@ -227,17 +222,14 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
         public void setOnResponseListener(ResponseBin responseBin) {
             if (responseBin != null && responseBin.getResponse() != null) {
                 String response = responseBin.getResponse();
-                try
-                {
+                try {
                     JSONObject jsonObject = new JSONObject(response);
                     String result = jsonObject.getString("result");
 
                     if (result.equals("success")) {
                         ToastUtils.showToast(LandingActivity.this, "Successfully settled up", true);
                         loadSummary();
-                    }
-
-                    else if (result.equals("failed")) {
+                    } else if (result.equals("failed")) {
                         ToastUtils.showToast(LandingActivity.this, "Failed to settle up", false);
                     }
 
@@ -250,6 +242,6 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        showDialogForSelectedFriend(adapter.getItem(position).getEmail());
+        showDialogForSelectedFriend(adapter.getItem(position).getFriendName());
     }
 }

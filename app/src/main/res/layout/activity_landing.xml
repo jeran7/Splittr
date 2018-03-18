@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:background="@color/splittrBlue"
+        android:background="@color/gray"
         android:orientation="horizontal"
         android:padding="@dimen/activity_vertical_margin">
 
@@ -18,7 +18,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.5">
-l
+
             <com.example.jeran.splittr.helper.CircleImageView
                 android:id="@+id/currentUserPic"
                 android:layout_centerInParent="true"
@@ -30,26 +30,24 @@ l
         <TextView
             android:id="@+id/currentUserName"
             android:layout_width="0dp"
+            android:text="Abhishek Jadav"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_weight="6"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="Abhi Jadav"
-            android:textColor="@android:color/white"
+            android:textColor="@android:color/black"
             android:textSize="@dimen/large_font" />
 
         <TextView
             android:id="@+id/currentUserBalance"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
+            android:layout_weight="3"
             android:gravity="right"
-            android:text="Balance
-            $3.29"
             android:textSize="@dimen/large_font"
-            android:textColor="@color/white" />
+            android:textColor="@color/splittrGreen" />
 
     </LinearLayout>
 

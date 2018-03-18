@@ -1,7 +1,9 @@
 package com.example.jeran.splittr;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.SpannableString;
@@ -41,9 +43,20 @@ public class SplashScreenActivity extends Activity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                startActivity(new Intent(SplashScreenActivity.this, LandingActivity.class));
+
+                if (!isUserLoggedIn()) {
+                    startActivity(new Intent(SplashScreenActivity.this, LaunchActivity.class));
+                }else{
+                    startActivity(new Intent(SplashScreenActivity.this, LandingActivity.class));
+                }
+
                 finish();
             }
         }, SPLASH_TIME_OUT);
+    }
+
+    private boolean isUserLoggedIn() {
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
+        return sharedPreferences.getBoolean(getString(R.string.USER_LOGIN), false);
     }
 }

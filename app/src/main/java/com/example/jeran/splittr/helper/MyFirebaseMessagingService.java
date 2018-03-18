@@ -53,7 +53,6 @@ import com.google.firebase.messaging.RemoteMessage;
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "MyFirebaseMsgService";
-    private int notificationIcon;
 
     /**
      * Called when message is received.
@@ -96,7 +95,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private void sendNotification(String messageBody) {
         Intent intent = new Intent(this, LandingActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
+        // create a unique PendingIntent using an integer request code.
+        final int requestCode = (int)System.currentTimeMillis() / 1000;
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, requestCode /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
         String channelId = getString(R.string.default_notification_channel_id);

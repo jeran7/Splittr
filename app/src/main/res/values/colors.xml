@@ -6,9 +6,10 @@
 
     <color name="splittrBlue">#2196F3</color>
     <color name="splittrTopGreen">#3b873b</color>
-    <color name="splittrGreen">#4EAA3B </color>
+    <color name="splittrGreen">#4EAA3B</color>
     <color name="white">#FFFFFF</color>
     <color name="lightGray">#F7F7F7</color>
+    <color name="gray">#DEDEDE</color>
     <color name="accent">#FFBB0F</color>
     <color name="owes">#F24646</color>
 </resources>

@@ -1,46 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/currentUserSummary"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="12dp"
-    android:orientation="vertical">
+    android:orientation="horizontal"
+    android:padding="@dimen/activity_vertical_margin">
 
-    <com.example.jeran.splittr.helper.CircleImageView
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginRight="8dp"
-        android:gravity="center"
-        android:background="@drawable/ic_account_circle_black_24dp" />
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.5">
+
+        <com.example.jeran.splittr.helper.CircleImageView
+            android:id="@+id/friendPic"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/ic_account_circle_black_24dp" />
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/friendName"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:fontFamily="roboto"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_weight="6"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:textColor="@android:color/black"
-        android:gravity="center"
-        android:layout_marginLeft="60dp"
-        android:layout_marginStart="60dp" />
+        android:textSize="@dimen/large_font" />
 
     <TextView
         android:id="@+id/netAmount"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginEnd="20dp"
-        android:layout_marginRight="20dp"
-        android:fontFamily="roboto"
-        android:gravity="center"/>
+        android:layout_weight="3"
+        android:gravity="right"
+        android:textColor="@color/white"
+        android:textSize="@dimen/large_font" />
 
-</RelativeLayout>
+</LinearLayout>
