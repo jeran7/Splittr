@@ -4,10 +4,9 @@ public class LinkUtils {
     // This URL changes based on where your server is
     // For AWS server it will be the link to your AWS EC2 instance
     // For localhost it will be your IPv4 address.
-//    private static String wsLink = "http://192.168.67.2/workspace/splittr/ws/";
-//    private static String wsLink = "http://192.168.67.2/workspace/splittr/ws/";
-//    private static String wsLink = "http://172.20.116.218/workspace/splittr/ws/";
-    private static String wsLink = "http://10.0.0.207/workspace/splittr/ws/";
+    // AWS EC2 Server
+    private static String wsLink = "http://18.221.6.228/splittr/ws/";
+
     public static final String REGISTRATION_URL = wsLink + "registration.php";
     public static final String LOGIN_URL = wsLink + "login.php";
     public static final String LIST_USERS_URL = wsLink + "listUsers.php";

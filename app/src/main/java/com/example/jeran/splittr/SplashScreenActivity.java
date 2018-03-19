@@ -14,7 +14,7 @@ import android.view.Window;
 import com.example.jeran.splittr.helper.TypeWriter;
 
 public class SplashScreenActivity extends Activity {
-    private static int SPLASH_TIME_OUT = 000;
+    private static int SPLASH_TIME_OUT = 3000;
     private TypeWriter splashScreenText;
 
     @Override
