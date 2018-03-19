@@ -8,6 +8,10 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -81,7 +85,12 @@ public class UtilityMethods {
                 }
             }
         };
-        new JsonCallAsync(context, "saveGcmTokenRequest", tokenData.toString(), LinkUtils.SAVE_GCM_TOKEN_URL, responseListener, false, "GET").execute();
+
+        if (InternetUtils.hasConnection(context)) {
+            new JsonCallAsync(context, "saveGcmTokenRequest", tokenData.toString(), LinkUtils.SAVE_GCM_TOKEN_URL, responseListener, false, "GET").execute();
+        } else {
+            ToastUtils.showToast(context, "Unable to connect. Please check your Internet connection.", false);
+        }
     }
 
 
@@ -94,5 +103,36 @@ public class UtilityMethods {
                     .commit();
         }
 
+    }
+
+    public static String getTimeAgo(String time) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");  //format for string to date conversion
+        Date date = null;   //string to date convert
+        try {
+            date = formatter.parse(time);
+        } catch (ParseException e) {
+            Log.d("Splittr", e.toString());
+        }
+
+        String timeAgo = null;
+        long now = new Date().getTime();
+        long diff = now - date.getTime();  //now you have a date interval representing with milliseconds.
+        diff /= 1000;
+
+        if (diff < 60) { // less then minute
+            timeAgo = ((int) diff) + "s";
+        } else if (diff < 60 * 60) { // less then hour
+            timeAgo = ((int) (diff / (60))) + "m";
+        } else if (diff < 60 * 60 * 24) { // less then day
+            timeAgo = ((int) (diff / (60 * 60))) + "h";
+        } else if (diff < 60 * 60 * 24 * 7) { // less then week
+            timeAgo = ((int) (diff / (60 * 60 * 24))) + "d";
+        } else if (diff < 60 * 60 * 24 * 7 * 52) { // less then year
+            timeAgo = ((int) (diff / (60 * 60 * 24 * 7))) + "w";
+        } else {
+            timeAgo = ((int) (diff / (60 * 60 * 24 * 7 * 52))) + "y";
+        }
+
+        return timeAgo;
     }
 }

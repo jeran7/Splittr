@@ -27,7 +27,7 @@ public class JsonCallAsync extends AsyncTask<Void, Void, String> {
     private ResponseBin responseBin = new ResponseBin();
     private String requestParam;
 
-    public JsonCallAsync(Context context,String requestParam, String requestData, String url, ResponseListener responseListener, boolean visibleProgress, String getOrPost) {
+    public JsonCallAsync(Context context, String requestParam, String requestData, String url, ResponseListener responseListener, boolean visibleProgress, String getOrPost) {
         this.context = context;
         this.responseListener = responseListener;
         this.requestParam = requestParam;
@@ -46,8 +46,9 @@ public class JsonCallAsync extends AsyncTask<Void, Void, String> {
 
     @Override
     protected String doInBackground(Void... params) {
-        Log.d("Splittr","URL => " + requestUrl);
-        Log.d("Splittr","Param => " + requestData);
+        Log.d("Splittr", "URL => " + requestUrl);
+        Log.d("Splittr", "Param => " + requestData);
+
         return UtilityMethods.callJsonWS(requestParam, requestData, requestUrl, getOrPost);
     }
 
@@ -59,7 +60,7 @@ public class JsonCallAsync extends AsyncTask<Void, Void, String> {
             progressDialog.cancel();
         }
 
-        Log.d("Splittr", "Response[" + requestParam+ "] ===> " + result);
+        Log.d("Splittr", "Response[" + requestParam + "] ===> " + result);
 
         responseBin.setResponse(result);
         responseListener.setOnResponseListener(responseBin);

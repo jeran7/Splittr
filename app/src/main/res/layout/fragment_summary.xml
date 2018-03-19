@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/currentUserSummary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@color/lightGray"
+        android:orientation="horizontal"
+        android:padding="@dimen/activity_vertical_margin">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.5">
+
+            <com.example.jeran.splittr.helper.CircleImageView
+                android:id="@+id/currentUserPic"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_centerInParent="true"
+                android:background="@drawable/ic_account_circle_black_24dp" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="6"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/currentUserName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/medium_large_font" />
+
+            <TextView
+                android:id="@+id/currentUserEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/gray"
+                android:textSize="@dimen/small_medium_font_size" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/currentUserBalance"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2.5"
+            android:gravity="center"
+            android:textColor="@color/splittrGreen"
+            android:textSize="@dimen/medium_large_font" />
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/summaryListView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/currentUserSummary" />
+
+</RelativeLayout>

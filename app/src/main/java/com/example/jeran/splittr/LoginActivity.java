@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.jeran.splittr.helper.InternetUtils;
 import com.example.jeran.splittr.helper.JsonCallAsync;
 import com.example.jeran.splittr.helper.LinkUtils;
 import com.example.jeran.splittr.helper.ResponseBin;
@@ -69,7 +70,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
         if (view == textViewSignUp) {
             finish();
-            startActivity(new Intent(this, RegisterActivity.class));
+            startActivity(new Intent(this, RegistrationActivity.class));
         }
     }
 
@@ -100,7 +101,11 @@ public class LoginActivity extends Activity implements View.OnClickListener {
             Log.d("Splittr", e.toString());
         }
 
-        new JsonCallAsync(LoginActivity.this, "loginRequest", loginData.toString(), LinkUtils.LOGIN_URL, responseListener, true, "GET").execute();
+        if (InternetUtils.hasConnection(LoginActivity.this)) {
+            new JsonCallAsync(LoginActivity.this, "loginRequest", loginData.toString(), LinkUtils.LOGIN_URL, responseListener, true, "GET").execute();
+        } else {
+            ToastUtils.showToast(LoginActivity.this, "Unable to connect. Please check your Internet connection.", false);
+        }
     }
 
     ResponseListener responseListener = new ResponseListener() {

@@ -19,6 +19,7 @@ public class SummaryListViewAdapter extends ArrayAdapter<SummaryListViewDataMode
     private static class ViewHolder
     {
         TextView friendName;
+        TextView friendEmail;
         TextView netAmount;
     }
 
@@ -54,6 +55,7 @@ public class SummaryListViewAdapter extends ArrayAdapter<SummaryListViewDataMode
             convertView = inflater.inflate(R.layout.summary_view_row_item, parent, false);
 
             viewHolder.friendName = convertView.findViewById(R.id.friendName);
+            viewHolder.friendEmail = convertView.findViewById(R.id.friendEmail);
             viewHolder.netAmount = convertView.findViewById(R.id.netAmount);
 
             result = convertView;
@@ -67,6 +69,7 @@ public class SummaryListViewAdapter extends ArrayAdapter<SummaryListViewDataMode
         }
 
         viewHolder.friendName.setText(dataModel.getFriendName());
+        viewHolder.friendEmail.setText(dataModel.getEmail());
         String netAmountStr = String.valueOf(dataModel.getAmount());
 
         if(netAmountStr.indexOf('.') == (netAmountStr.length() - 2))
@@ -77,7 +80,7 @@ public class SummaryListViewAdapter extends ArrayAdapter<SummaryListViewDataMode
         if(dataModel.getAmount() == 0)
         {
             viewHolder.netAmount.setText("You're settled up");
-            viewHolder.netAmount.setTextColor(context.getResources().getColor(R.color.splittrGreen));
+            viewHolder.netAmount.setTextColor(context.getResources().getColor(R.color.gray));
         }
 
         else if(dataModel.getAmount() > 0)

@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.jeran.splittr.helper.InternetUtils;
 import com.example.jeran.splittr.helper.JsonCallAsync;
 import com.example.jeran.splittr.helper.LinkUtils;
 import com.example.jeran.splittr.helper.ResponseBin;
@@ -26,7 +27,7 @@ import com.example.jeran.splittr.helper.UtilityMethods;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class RegisterActivity extends Activity implements View.OnClickListener {
+public class RegistrationActivity extends Activity implements View.OnClickListener {
 
     private Button buttonRegister;
     private EditText email;
@@ -99,7 +100,11 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
             Log.d("Splittr", e.toString());
         }
 
-        new JsonCallAsync(RegisterActivity.this, "registrationRequest", registrationData.toString(), LinkUtils.REGISTRATION_URL, responseListener, true, "GET").execute();
+        if (InternetUtils.hasConnection(RegistrationActivity.this)) {
+            new JsonCallAsync(RegistrationActivity.this, "registrationRequest", registrationData.toString(), LinkUtils.REGISTRATION_URL, responseListener, true, "GET").execute();
+        } else {
+            ToastUtils.showToast(RegistrationActivity.this, "Unable to connect. Please check your Internet connection.", false);
+        }
     }
 
     ResponseListener responseListener = new ResponseListener() {
@@ -123,7 +128,7 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
                         String name = jsonObject.getString("name");
 
                         String token = sharedPref.getString(getString(R.string.GCM_TOKEN), null);
-                        UtilityMethods.sendRegistrationToServer(RegisterActivity.this, email, token);
+                        UtilityMethods.sendRegistrationToServer(RegistrationActivity.this, email, token);
 
                         editor.putString(getString(R.string.USER_NAME), name);
                         editor.putString(getString(R.string.USER_EMAIL), email);
@@ -131,14 +136,14 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
 
                         ToastUtils.showToast(getApplicationContext(), "Registered successfully", true);
                         finish();
-                        startActivity(new Intent(RegisterActivity.this, LandingActivity.class));
+                        startActivity(new Intent(RegistrationActivity.this, LandingActivity.class));
                     } else if (result.equals("failed")) {
                         ToastUtils.showToast(getApplicationContext(), "Registration failed", false);
                     } else if (result.equals("taken")) {
                         ToastUtils.showToast(getApplicationContext(), "A user with this email already exists", false);
                     }
                 } catch (JSONException e) {
-                    Toast.makeText(RegisterActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegistrationActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
                 }
             }
         }

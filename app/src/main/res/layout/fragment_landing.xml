@@ -1,58 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/currentUserSummary"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLanding"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tabsLanding"
+            android:layout_width="fill_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:tabIndicatorHeight="4dp" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pagerLanding"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:background="@color/gray"
-        android:orientation="horizontal"
-        android:padding="@dimen/activity_vertical_margin">
-
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1.5">
-
-            <com.example.jeran.splittr.helper.CircleImageView
-                android:id="@+id/currentUserPic"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_centerInParent="true"
-                android:background="@drawable/ic_account_circle_black_24dp" />
-        </RelativeLayout>
-
-        <TextView
-            android:id="@+id/currentUserName"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_weight="6"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/large_font" />
-
-        <TextView
-            android:id="@+id/currentUserBalance"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:gravity="end"
-            android:textColor="@color/splittrGreen"
-            android:textSize="@dimen/large_font" />
-
-    </LinearLayout>
-
-    <ListView
-        android:id="@+id/summaryListView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/currentUserSummary" />
+        android:layout_below="@id/appBarLanding"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 </RelativeLayout>

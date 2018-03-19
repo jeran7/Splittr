@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import com.example.jeran.splittr.helper.InternetUtils;
 import com.example.jeran.splittr.helper.JsonCallAsync;
 import com.example.jeran.splittr.helper.LinkUtils;
 import com.example.jeran.splittr.helper.ResponseBin;
@@ -49,7 +50,7 @@ public class EnterBillFragment extends Fragment implements View.OnClickListener,
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment LandingFragment.
+     * @return A new instance of fragment SummaryFragment.
      */
     // TODO: Rename and change types and number of parameters
     public static EnterBillFragment newInstance() {
@@ -79,7 +80,11 @@ public class EnterBillFragment extends Fragment implements View.OnClickListener,
             Log.d("Splittr", e.toString());
         }
 
-        new JsonCallAsync(getActivity(), "listFriendsRequest", listFriendsObject.toString(), LinkUtils.LIST_FRIENDS_URL, responseListener, true, "GET").execute();
+        if (InternetUtils.hasConnection(getActivity())) {
+            new JsonCallAsync(getActivity(), "listFriendsRequest", listFriendsObject.toString(), LinkUtils.LIST_FRIENDS_URL, responseListener, true, "GET").execute();
+        } else {
+            ToastUtils.showToast(getActivity(), "Unable to connect. Please check your Internet connection.", false);
+        }
     }
 
     private void findViewsById() {
@@ -93,7 +98,7 @@ public class EnterBillFragment extends Fragment implements View.OnClickListener,
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.addBillButton:
-                    if (checkedEmails.size() == 0) {
+                if (checkedEmails.size() == 0) {
                     ToastUtils.showToast(getActivity(), "Please select atleast 1 friend", false);
                 } else if (TextUtils.isEmpty(billTitle.getText().toString())) {
                     billTitle.setError("Please enter the description");
@@ -118,7 +123,11 @@ public class EnterBillFragment extends Fragment implements View.OnClickListener,
                         Log.d("Splittr", e.toString());
                     }
 
-                    new JsonCallAsync(getActivity(), "addItemRequest", addItemJSONObject.toString(), LinkUtils.ADD_ITEM_URL, addItemResponseListener, true, "GET").execute();
+                    if (InternetUtils.hasConnection(getActivity())) {
+                        new JsonCallAsync(getActivity(), "addItemRequest", addItemJSONObject.toString(), LinkUtils.ADD_ITEM_URL, addItemResponseListener, true, "GET").execute();
+                    } else {
+                        ToastUtils.showToast(getActivity(), "Unable to connect. Please check your Internet connection.", false);
+                    }
                 }
 
                 break;

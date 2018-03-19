@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.jeran.splittr.helper.InternetUtils;
 import com.example.jeran.splittr.helper.JsonCallAsync;
 import com.example.jeran.splittr.helper.LinkUtils;
 import com.example.jeran.splittr.helper.ResponseBin;
@@ -45,7 +46,7 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
     private FloatingActionMenu fabMenu;
     private TextView navName, navEmail;
     private FloatingActionButton fab1, fab2;
-    protected static String email="", name = "";
+    protected static String email = "", name = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -255,7 +256,12 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
                             }
                         };
 
-                        new JsonCallAsync(LandingActivity.this, "deleteGcmTokenRequest", deleteGcmTokenData.toString(), LinkUtils.DELETE_TOKEN_URL, responseListener, true, "GET").execute();
+                        if (InternetUtils.hasConnection(LandingActivity.this)) {
+                            new JsonCallAsync(LandingActivity.this, "deleteGcmTokenRequest", deleteGcmTokenData.toString(), LinkUtils.DELETE_TOKEN_URL, responseListener, true, "GET").execute();
+                        } else {
+                            ToastUtils.showToast(LandingActivity.this, "Unable to connect. Please check your Internet connection.", false);
+                        }
+
 
                         break;
 

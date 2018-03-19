@@ -22,7 +22,7 @@
             android:value="ocr" />
 
         <activity android:name=".LaunchActivity" />
-        <activity android:name=".RegisterActivity" />
+        <activity android:name=".RegistrationActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".LandingActivity" />
         <activity android:name=".PhotoCaptureActivity" />

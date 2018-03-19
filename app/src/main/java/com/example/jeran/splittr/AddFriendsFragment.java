@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.jeran.splittr.helper.InternetUtils;
 import com.example.jeran.splittr.helper.JsonCallAsync;
 import com.example.jeran.splittr.helper.LinkUtils;
 import com.example.jeran.splittr.helper.ResponseBin;
@@ -50,7 +51,7 @@ public class AddFriendsFragment extends Fragment implements AdapterView.OnItemCl
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment LandingFragment.
+     * @return A new instance of fragment SummaryFragment.
      */
     // TODO: Rename and change types and number of parameters
     public static AddFriendsFragment newInstance() {
@@ -78,7 +79,11 @@ public class AddFriendsFragment extends Fragment implements AdapterView.OnItemCl
             Log.d("Splittr", e.toString());
         }
 
-        new JsonCallAsync(getActivity(), "listUsersRequest", listUsersObject.toString(), LinkUtils.LIST_USERS_URL, responseListener, true, "GET").execute();
+        if(InternetUtils.hasConnection(getActivity())){
+            new JsonCallAsync(getActivity(), "listUsersRequest", listUsersObject.toString(), LinkUtils.LIST_USERS_URL, responseListener, true, "GET").execute();
+        }else{
+            ToastUtils.showToast(getActivity(), "Unable to connect. Please check your Internet connection.", false);
+        }
     }
 
     private void findViewsById() {
@@ -137,7 +142,12 @@ public class AddFriendsFragment extends Fragment implements AdapterView.OnItemCl
                             Log.d("Splittr", e.toString());
                         }
 
-                        new JsonCallAsync(getActivity(), "addFriendRequest", addFriendData.toString(), LinkUtils.ADD_FRIENDS_URL, addFriendListener, true, "GET").execute();
+                        if(InternetUtils.hasConnection(getActivity())){
+                            new JsonCallAsync(getActivity(), "addFriendRequest", addFriendData.toString(), LinkUtils.ADD_FRIENDS_URL, addFriendListener, true, "GET").execute();
+                        }else{
+                            ToastUtils.showToast(getActivity(), "Unable to connect. Please check your Internet connection.", false);
+                        }
+
                         break;
 
                     case DialogInterface.BUTTON_NEGATIVE:
