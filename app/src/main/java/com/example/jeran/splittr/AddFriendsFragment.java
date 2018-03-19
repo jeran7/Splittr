@@ -1,23 +1,19 @@
 package com.example.jeran.splittr;
 
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.text.Editable;
-import android.text.Html;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.jeran.splittr.helper.FriendListViewDataModel;
+import com.example.jeran.splittr.helper.FriendsListViewAdapter;
 import com.example.jeran.splittr.helper.InternetUtils;
 import com.example.jeran.splittr.helper.JsonCallAsync;
 import com.example.jeran.splittr.helper.LinkUtils;
@@ -30,18 +26,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Locale;
 
-public class AddFriendsFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class AddFriendsFragment extends Fragment {
 
     private EditText searchQuery;
-    private ListView searchQueryList;
-    private ArrayList<String> filteredFriendsList = new ArrayList<>();
-    ArrayAdapter<String> arrayAdapter;
-    private HashMap<String, String> friends = new HashMap<>();
-    private SharedPreferences sharedPreferences;
+    private ListView friendsListView;
     private View view;
+    private FriendsListViewAdapter adapter;
+    private ArrayList<FriendListViewDataModel> friendsDataModels;
+    private ArrayList<FriendListViewDataModel> filteredFriendsDataModel;
 
     public AddFriendsFragment() {
         // Required empty public constructor
@@ -65,9 +59,22 @@ public class AddFriendsFragment extends Fragment implements AdapterView.OnItemCl
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_add_friends, container, false);
         findViewsById();
+        setUpQueryWatcher();
+        setUpListView();
         loadUsers();
 
         return view;
+    }
+
+    private void setUpQueryWatcher() {
+        searchQuery.addTextChangedListener(queryWatcher);
+    }
+
+    private void setUpListView() {
+        friendsDataModels = new ArrayList<>();
+        filteredFriendsDataModel = new ArrayList<>();
+        adapter = new FriendsListViewAdapter(filteredFriendsDataModel, getActivity());
+        friendsListView.setAdapter(adapter);
     }
 
     private void loadUsers() {
@@ -79,16 +86,16 @@ public class AddFriendsFragment extends Fragment implements AdapterView.OnItemCl
             Log.d("Splittr", e.toString());
         }
 
-        if(InternetUtils.hasConnection(getActivity())){
+        if (InternetUtils.hasConnection(getActivity())) {
             new JsonCallAsync(getActivity(), "listUsersRequest", listUsersObject.toString(), LinkUtils.LIST_USERS_URL, responseListener, true, "GET").execute();
-        }else{
+        } else {
             ToastUtils.showToast(getActivity(), "Unable to connect. Please check your Internet connection.", false);
         }
     }
 
     private void findViewsById() {
         searchQuery = (EditText) view.findViewById(R.id.searchQuery);
-        searchQueryList = (ListView) view.findViewById(R.id.searchResultList);
+        friendsListView = (ListView) view.findViewById(R.id.searchResultList);
     }
 
     private TextWatcher queryWatcher = new TextWatcher() {
@@ -103,66 +110,21 @@ public class AddFriendsFragment extends Fragment implements AdapterView.OnItemCl
         @Override
         public void afterTextChanged(Editable editable) {
             String query = searchQuery.getText().toString().toLowerCase(Locale.getDefault());
-            filteredFriendsList.clear();
+            filteredFriendsDataModel.clear();
             if (query.length() == 0) {
-                for (String friend : friends.keySet()) {
-                    filteredFriendsList.add(friend);
+                for (FriendListViewDataModel friend : friendsDataModels) {
+                    filteredFriendsDataModel.add(friend);
                 }
             } else {
-                for (String friend : friends.keySet()) {
-                    if (friend.toLowerCase(Locale.getDefault()).contains(query)) {
-                        filteredFriendsList.add(friend);
+                for (FriendListViewDataModel friend : friendsDataModels) {
+                    if (friend.getname().toLowerCase(Locale.getDefault()).contains(query) || friend.getFriendEmail().toLowerCase(Locale.getDefault()).contains(query)) {
+                        filteredFriendsDataModel.add(friend);
                     }
                 }
             }
-            arrayAdapter.notifyDataSetChanged();
+            adapter.notifyDataSetChanged();
         }
     };
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        // Get the selected item text from ListView
-        String selectedFriend = (String) parent.getItemAtPosition(position);
-        showDialogForSelectedFriend(selectedFriend);
-    }
-
-    private void showDialogForSelectedFriend(final String selectedFriend) {
-        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case DialogInterface.BUTTON_POSITIVE:
-
-                        JSONObject addFriendData = new JSONObject();
-
-                        try {
-                            addFriendData.put("email", LandingActivity.email);
-                            addFriendData.put("friend", friends.get(selectedFriend));
-                        } catch (JSONException e) {
-                            Log.d("Splittr", e.toString());
-                        }
-
-                        if(InternetUtils.hasConnection(getActivity())){
-                            new JsonCallAsync(getActivity(), "addFriendRequest", addFriendData.toString(), LinkUtils.ADD_FRIENDS_URL, addFriendListener, true, "GET").execute();
-                        }else{
-                            ToastUtils.showToast(getActivity(), "Unable to connect. Please check your Internet connection.", false);
-                        }
-
-                        break;
-
-                    case DialogInterface.BUTTON_NEGATIVE:
-                        break;
-                }
-            }
-        };
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder
-                .setTitle("Add Friend")
-                .setMessage(Html.fromHtml("<b>" + selectedFriend + "</b><br>" + friends.get(selectedFriend)))
-                .setPositiveButton("Add", dialogClickListener)
-                .setNegativeButton("Cancel", dialogClickListener).show();
-    }
 
     ResponseListener responseListener = new ResponseListener() {
         @Override
@@ -175,6 +137,7 @@ public class AddFriendsFragment extends Fragment implements AdapterView.OnItemCl
                     String result = jsonObject.getString("result");
 
                     if (result.equals("success")) {
+                        friendsDataModels.clear();
 
                         JSONArray users = jsonObject.getJSONArray("users");
 
@@ -182,18 +145,14 @@ public class AddFriendsFragment extends Fragment implements AdapterView.OnItemCl
                             String name = users.getJSONObject(i).getString("first") + " " + users.getJSONObject(i).getString("last");
                             String email = users.getJSONObject(i).getString("email");
 
-                            friends.put(name, email);
+                            friendsDataModels.add(new FriendListViewDataModel(LinkUtils.PROFILE_PIC_PATH + email + ".png", name, email));
                         }
 
-                        for (String friend : friends.keySet()) {
-                            filteredFriendsList.add(friend);
+                        for (FriendListViewDataModel friend : friendsDataModels) {
+                            filteredFriendsDataModel.add(friend);
                         }
 
-                        arrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, filteredFriendsList);
-                        searchQueryList.setAdapter(arrayAdapter);
-                        searchQueryList.setOnItemClickListener(AddFriendsFragment.this);
-
-                        searchQuery.addTextChangedListener(queryWatcher);
+                        adapter.notifyDataSetChanged();
                     } else if (result.equals("failed")) {
                         ToastUtils.showToast(getActivity(), "Could not fetch list of available friends", false);
                     }
@@ -204,25 +163,4 @@ public class AddFriendsFragment extends Fragment implements AdapterView.OnItemCl
         }
     };
 
-    ResponseListener addFriendListener = new ResponseListener() {
-        @Override
-        public void setOnResponseListener(ResponseBin responseBin) {
-            if (responseBin != null && responseBin.getResponse() != null) {
-                String response = responseBin.getResponse();
-
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    String result = jsonObject.getString("result");
-
-                    if (result.equals("success")) {
-                        ToastUtils.showToast(getActivity(), "Added friend successfully", true);
-                    } else if (result.equals("isFriendAlready")) {
-                        ToastUtils.showToast(getActivity(), "Already a friend", false);
-                    }
-                } catch (JSONException error) {
-                    Toast.makeText(getActivity(), "Error occurred", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
-    };
 }

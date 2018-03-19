@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.jeran.splittr.helper.CircleImageView;
 import com.example.jeran.splittr.helper.InternetUtils;
 import com.example.jeran.splittr.helper.JsonCallAsync;
 import com.example.jeran.splittr.helper.LinkUtils;
@@ -22,6 +23,7 @@ import com.example.jeran.splittr.helper.ResponseListener;
 import com.example.jeran.splittr.helper.SummaryListViewAdapter;
 import com.example.jeran.splittr.helper.SummaryListViewDataModel;
 import com.example.jeran.splittr.helper.ToastUtils;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,8 +38,8 @@ public class SummaryFragment extends Fragment implements AdapterView.OnItemClick
 
     private View view;
     ListView listView;
-    private TextView currentUserName, currentUserEmail;
-    private TextView currentUserBalance;
+    private CircleImageView currentUserPic;
+    private TextView currentUserName, currentUserEmail, currentUserBalance;
     private ArrayList<SummaryListViewDataModel> dataModels;
     private SummaryListViewAdapter adapter;
 
@@ -70,6 +72,7 @@ public class SummaryFragment extends Fragment implements AdapterView.OnItemClick
 
     private void findViewsById() {
         listView = (ListView) view.findViewById(R.id.summaryListView);
+        currentUserPic = (CircleImageView) view.findViewById(R.id.currentUserPic);
         currentUserName = (TextView) view.findViewById(R.id.currentUserName);
         currentUserEmail = (TextView) view.findViewById(R.id.currentUserEmail);
         currentUserBalance = (TextView) view.findViewById(R.id.currentUserBalance);
@@ -79,9 +82,13 @@ public class SummaryFragment extends Fragment implements AdapterView.OnItemClick
         dataModels = new ArrayList<>();
         adapter = new SummaryListViewAdapter(dataModels, getActivity());
         listView.setAdapter(adapter);
+        listView.setOnItemClickListener(SummaryFragment.this);
     }
 
     private void loadSummary() {
+        Picasso.with(getActivity())
+                .load(LinkUtils.PROFILE_PIC_PATH + LandingActivity.email + ".png")
+                .into(currentUserPic);
         currentUserName.setText(LandingActivity.name);
         currentUserEmail.setText(LandingActivity.email);
         JSONObject getSummaryObject = new JSONObject();
@@ -92,19 +99,19 @@ public class SummaryFragment extends Fragment implements AdapterView.OnItemClick
             Log.d("Splittr", e.toString());
         }
 
-        if(InternetUtils.hasConnection(getActivity())){
+        if (InternetUtils.hasConnection(getActivity())) {
             new JsonCallAsync(getActivity(), "getSummaryRequest", getSummaryObject.toString(), LinkUtils.GET_SUMMARY_URL, summaryListener, true, "GET").execute();
-        }else{
+        } else {
             ToastUtils.showToast(getActivity(), "Unable to connect. Please check your Internet connection.", false);
         }
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        showDialogForSelectedFriend(adapter.getItem(position).getFriendName(), adapter.getItem(position).getEmail());
+        showDialogForSelectedFriend(adapter.getItem(position).getname(), adapter.getItem(position).getEmail());
     }
 
-    private void showDialogForSelectedFriend(String selectedFriend,final String selectedFriendEmail) {
+    private void showDialogForSelectedFriend(String selectedFriend, final String selectedFriendEmail) {
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -120,9 +127,9 @@ public class SummaryFragment extends Fragment implements AdapterView.OnItemClick
                             Log.d("Splittr", e.toString());
                         }
 
-                        if(InternetUtils.hasConnection(getActivity())){
+                        if (InternetUtils.hasConnection(getActivity())) {
                             new JsonCallAsync(getActivity(), "settleUpRequest", settleUpData.toString(), LinkUtils.SETTLE_UP_URL, settleUpListener, true, "GET").execute();
-                        }else{
+                        } else {
                             ToastUtils.showToast(getActivity(), "Unable to connect. Please check your Internet connection.", false);
                         }
 
@@ -167,7 +174,6 @@ public class SummaryFragment extends Fragment implements AdapterView.OnItemClick
                         }
 
                         adapter.notifyDataSetChanged();
-                        listView.setOnItemClickListener(SummaryFragment.this);
 
                         DecimalFormat df = new DecimalFormat("#.##");
                         df.setRoundingMode(RoundingMode.CEILING);

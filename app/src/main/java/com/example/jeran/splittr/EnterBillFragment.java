@@ -177,17 +177,17 @@ public class EnterBillFragment extends Fragment implements View.OnClickListener,
                                 String name = friends.getJSONObject(i).getString("first") + " " + friends.getJSONObject(i).getString("last");
                                 String email = friends.getJSONObject(i).getString("email");
 
-                                hashMap.put("friendName", name);
+                                hashMap.put("name", name);
                                 hashMap.put("email", email);
                                 arrayList.add(hashMap);
                             }
 
                             selectedFriends = new ArrayList<>(friends.length());
 
-                            String[] from = {"friendName"};
-                            int[] to = {R.id.friendName};
+                            String[] from = {"name"};
+                            int[] to = {R.id.name};
 
-                            SimpleAdapter adapter = new SimpleAdapter(getActivity(), arrayList, R.layout.friends_list_row_item, from, to);
+                            SimpleAdapter adapter = new SimpleAdapter(getActivity(), arrayList, R.layout.select_friends_list_row_item, from, to);
                             friendsList.setAdapter(adapter);
                             friendsList.setOnItemClickListener(EnterBillFragment.this);
                             addBillButton.setOnClickListener(EnterBillFragment.this);

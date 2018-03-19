@@ -8,18 +8,18 @@ package com.example.jeran.splittr.helper;
 public class SummaryListViewDataModel
 {
     private final String email;
-    private String friendName;
+    private String name;
     private double amount;
 
-    public SummaryListViewDataModel(String friendName, double amount, String email)
+    public SummaryListViewDataModel(String name, double amount, String email)
     {
-        this.friendName = friendName;
+        this.name = name;
         this.amount = amount;
         this.email = email;
     }
 
-    public String getFriendName() {
-        return friendName;
+    public String getname() {
+        return name;
     }
 
     public Double getAmount() {

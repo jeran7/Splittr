@@ -35,7 +35,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
-            android:hint="@string/email"
+            android:hint="@string/friendEmail"
             android:inputType="textEmailAddress" />
 
         <EditText

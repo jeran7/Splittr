@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.jeran.splittr.helper.CircleImageView;
 import com.example.jeran.splittr.helper.InternetUtils;
 import com.example.jeran.splittr.helper.JsonCallAsync;
 import com.example.jeran.splittr.helper.LinkUtils;
@@ -30,6 +31,7 @@ import com.example.jeran.splittr.helper.ToastUtils;
 import com.example.jeran.splittr.helper.UtilityMethods;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,7 +48,8 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
     private FloatingActionMenu fabMenu;
     private TextView navName, navEmail;
     private FloatingActionButton fab1, fab2;
-    protected static String email = "", name = "";
+    public static String email = "", name = "";
+    private CircleImageView navPic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +75,7 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navPic = (CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.nav_pic);
         navName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.nav_name);
         navEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.nav_email);
         fab1 = ((FloatingActionButton) findViewById(R.id.fab1));
@@ -135,6 +139,9 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void setUpNavigationDrawer() {
+        Picasso.with(LandingActivity.this)
+                .load(LinkUtils.PROFILE_PIC_PATH + LandingActivity.email + ".png")
+                .into(navPic);
         navName.setText(LandingActivity.name);
         navEmail.setText(LandingActivity.email);
 
