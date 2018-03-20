@@ -12,7 +12,7 @@
         android:layout_weight="1.5">
 
         <com.example.jeran.splittr.helper.CircleImageView
-            android:id="@+id/friendPic"
+            android:id="@+id/pic"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_centerInParent="true"
@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        android:layout_weight="8.5"
+        android:layout_weight="7"
         android:orientation="vertical">
 
         <TextView
@@ -38,7 +38,7 @@
             android:textSize="@dimen/medium_large_font" />
 
         <TextView
-            android:id="@+id/friendEmail"
+            android:id="@+id/email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
@@ -46,5 +46,14 @@
             android:textColor="@color/gray"
             android:textSize="@dimen/medium_font_size" />
     </LinearLayout>
+
+    <CheckBox
+        android:id="@+id/checkbox"
+        android:layout_weight="1.5"
+        android:visibility="gone"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

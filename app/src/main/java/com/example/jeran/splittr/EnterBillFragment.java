@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.example.jeran.splittr.helper.InternetUtils;
@@ -22,24 +21,25 @@ import com.example.jeran.splittr.helper.LinkUtils;
 import com.example.jeran.splittr.helper.ResponseBin;
 import com.example.jeran.splittr.helper.ResponseListener;
 import com.example.jeran.splittr.helper.ToastUtils;
+import com.example.jeran.splittr.helper.UsersDataModel;
+import com.example.jeran.splittr.helper.UsersListViewAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class EnterBillFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener {
 
     private EditText billTitle;
     private EditText billAmount;
-    private ListView friendsList;
+    private ListView friendsListView;
     private Button addBillButton;
-    ArrayList<String> selectedFriends;
     private ArrayList<String> checkedEmails;
-    private ArrayList<HashMap<String, String>> arrayList;
     private View view;
+    private ArrayList<UsersDataModel> friendsDataModels;
+    private UsersListViewAdapter adapter;
 
 
     public EnterBillFragment() {
@@ -64,10 +64,19 @@ public class EnterBillFragment extends Fragment implements View.OnClickListener,
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_enter_bill, container, false);
         findViewsById();
-        checkedEmails = new ArrayList<>();
+        setUpListView();
         loadFriends();
 
         return view;
+    }
+
+    private void setUpListView() {
+        checkedEmails = new ArrayList<>();
+        friendsDataModels = new ArrayList<>();
+        adapter = new UsersListViewAdapter(friendsDataModels, getActivity(), 2);
+        friendsListView.setAdapter(adapter);
+        friendsListView.setOnItemClickListener(EnterBillFragment.this);
+        addBillButton.setOnClickListener(EnterBillFragment.this);
     }
 
     private void loadFriends() {
@@ -90,7 +99,7 @@ public class EnterBillFragment extends Fragment implements View.OnClickListener,
     private void findViewsById() {
         billTitle = view.findViewById(R.id.billTitle);
         billAmount = view.findViewById(R.id.billAmount);
-        friendsList = view.findViewById(R.id.friendsList);
+        friendsListView = view.findViewById(R.id.friendsList);
         addBillButton = view.findViewById(R.id.addBillButton);
     }
 
@@ -136,8 +145,9 @@ public class EnterBillFragment extends Fragment implements View.OnClickListener,
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        String email = arrayList.get(position).get("email");
-        CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkboxFriendsList);
+
+        String email = friendsDataModels.get(position).getEmail();
+        CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
         checkBox.setChecked(!checkBox.isChecked());
 
         if (checkBox.isChecked()) {
@@ -163,34 +173,22 @@ public class EnterBillFragment extends Fragment implements View.OnClickListener,
                     String result = jsonObject.getString("result");
 
                     if (result.equals("success")) {
+                        friendsDataModels.clear();
+
                         JSONArray friends = jsonObject.getJSONArray("friends");
 
                         if (friends.length() == 0) {
                             ToastUtils.showToast(getActivity(), "No friends, cannot split items", false);
                             return;
                         } else {
-                            arrayList = new ArrayList<>();
-
                             for (int i = 0; i < friends.length(); i++) {
-                                HashMap<String, String> hashMap = new HashMap<>();
-
                                 String name = friends.getJSONObject(i).getString("first") + " " + friends.getJSONObject(i).getString("last");
                                 String email = friends.getJSONObject(i).getString("email");
 
-                                hashMap.put("name", name);
-                                hashMap.put("email", email);
-                                arrayList.add(hashMap);
+                                friendsDataModels.add(new UsersDataModel(LinkUtils.PROFILE_PIC_PATH + email + ".png", name, email));
                             }
 
-                            selectedFriends = new ArrayList<>(friends.length());
-
-                            String[] from = {"name"};
-                            int[] to = {R.id.name};
-
-                            SimpleAdapter adapter = new SimpleAdapter(getActivity(), arrayList, R.layout.select_friends_list_row_item, from, to);
-                            friendsList.setAdapter(adapter);
-                            friendsList.setOnItemClickListener(EnterBillFragment.this);
-                            addBillButton.setOnClickListener(EnterBillFragment.this);
+                            adapter.notifyDataSetChanged();
                         }
                     } else if (result.equals("failed")) {
                         ToastUtils.showToast(getActivity(), "Error retrieving friends list", false);

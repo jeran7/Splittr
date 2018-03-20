@@ -1,19 +1,23 @@
 package com.example.jeran.splittr;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.example.jeran.splittr.helper.FriendListViewDataModel;
-import com.example.jeran.splittr.helper.FriendsListViewAdapter;
+import com.example.jeran.splittr.helper.UsersDataModel;
+import com.example.jeran.splittr.helper.UsersListViewAdapter;
 import com.example.jeran.splittr.helper.InternetUtils;
 import com.example.jeran.splittr.helper.JsonCallAsync;
 import com.example.jeran.splittr.helper.LinkUtils;
@@ -28,14 +32,14 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class AddFriendsFragment extends Fragment {
+public class AddFriendsFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     private EditText searchQuery;
-    private ListView friendsListView;
+    private ListView usersListView;
     private View view;
-    private FriendsListViewAdapter adapter;
-    private ArrayList<FriendListViewDataModel> friendsDataModels;
-    private ArrayList<FriendListViewDataModel> filteredFriendsDataModel;
+    private UsersListViewAdapter adapter;
+    private ArrayList<UsersDataModel> usersDataModels;
+    private ArrayList<UsersDataModel> filteredUsersDataModel;
 
     public AddFriendsFragment() {
         // Required empty public constructor
@@ -71,10 +75,11 @@ public class AddFriendsFragment extends Fragment {
     }
 
     private void setUpListView() {
-        friendsDataModels = new ArrayList<>();
-        filteredFriendsDataModel = new ArrayList<>();
-        adapter = new FriendsListViewAdapter(filteredFriendsDataModel, getActivity());
-        friendsListView.setAdapter(adapter);
+        usersDataModels = new ArrayList<>();
+        filteredUsersDataModel = new ArrayList<>();
+        adapter = new UsersListViewAdapter(filteredUsersDataModel, getActivity(), 1);
+        usersListView.setAdapter(adapter);
+        usersListView.setOnItemClickListener(this);
     }
 
     private void loadUsers() {
@@ -95,7 +100,50 @@ public class AddFriendsFragment extends Fragment {
 
     private void findViewsById() {
         searchQuery = (EditText) view.findViewById(R.id.searchQuery);
-        friendsListView = (ListView) view.findViewById(R.id.searchResultList);
+        usersListView = (ListView) view.findViewById(R.id.searchResultList);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        showDialogForSelectedFriend(adapter.getItem(position));
+    }
+
+    private void showDialogForSelectedFriend(final UsersDataModel selectedFriendDataModel) {
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
+
+                        JSONObject addFriendData = new JSONObject();
+
+                        try {
+                            addFriendData.put("email", LandingActivity.email);
+                            addFriendData.put("friend", selectedFriendDataModel.getEmail());
+                        } catch (JSONException e) {
+                            Log.d("Splittr", e.toString());
+                        }
+
+                        if (InternetUtils.hasConnection(getActivity())) {
+                            new JsonCallAsync(getActivity(), "addFriendRequest", addFriendData.toString(), LinkUtils.ADD_FRIENDS_URL, addFriendListener, true, "GET").execute();
+                        } else {
+                            ToastUtils.showToast(getActivity(), "Unable to connect. Please check your Internet connection.", false);
+                        }
+
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder
+                .setTitle("Add Friend")
+                .setMessage(Html.fromHtml("<b>" + selectedFriendDataModel.getname() + "</b><br>" + selectedFriendDataModel.getEmail()))
+                .setPositiveButton("Add", dialogClickListener)
+                .setNegativeButton("Cancel", dialogClickListener).show();
     }
 
     private TextWatcher queryWatcher = new TextWatcher() {
@@ -110,15 +158,15 @@ public class AddFriendsFragment extends Fragment {
         @Override
         public void afterTextChanged(Editable editable) {
             String query = searchQuery.getText().toString().toLowerCase(Locale.getDefault());
-            filteredFriendsDataModel.clear();
+            filteredUsersDataModel.clear();
             if (query.length() == 0) {
-                for (FriendListViewDataModel friend : friendsDataModels) {
-                    filteredFriendsDataModel.add(friend);
+                for (UsersDataModel friend : usersDataModels) {
+                    filteredUsersDataModel.add(friend);
                 }
             } else {
-                for (FriendListViewDataModel friend : friendsDataModels) {
-                    if (friend.getname().toLowerCase(Locale.getDefault()).contains(query) || friend.getFriendEmail().toLowerCase(Locale.getDefault()).contains(query)) {
-                        filteredFriendsDataModel.add(friend);
+                for (UsersDataModel friend : usersDataModels) {
+                    if (friend.getname().toLowerCase(Locale.getDefault()).contains(query) || friend.getEmail().toLowerCase(Locale.getDefault()).contains(query)) {
+                        filteredUsersDataModel.add(friend);
                     }
                 }
             }
@@ -137,7 +185,7 @@ public class AddFriendsFragment extends Fragment {
                     String result = jsonObject.getString("result");
 
                     if (result.equals("success")) {
-                        friendsDataModels.clear();
+                        usersDataModels.clear();
 
                         JSONArray users = jsonObject.getJSONArray("users");
 
@@ -145,11 +193,11 @@ public class AddFriendsFragment extends Fragment {
                             String name = users.getJSONObject(i).getString("first") + " " + users.getJSONObject(i).getString("last");
                             String email = users.getJSONObject(i).getString("email");
 
-                            friendsDataModels.add(new FriendListViewDataModel(LinkUtils.PROFILE_PIC_PATH + email + ".png", name, email));
+                            usersDataModels.add(new UsersDataModel(LinkUtils.PROFILE_PIC_PATH + email + ".png", name, email));
                         }
 
-                        for (FriendListViewDataModel friend : friendsDataModels) {
-                            filteredFriendsDataModel.add(friend);
+                        for (UsersDataModel friend : usersDataModels) {
+                            filteredUsersDataModel.add(friend);
                         }
 
                         adapter.notifyDataSetChanged();
@@ -163,4 +211,26 @@ public class AddFriendsFragment extends Fragment {
         }
     };
 
+
+    ResponseListener addFriendListener = new ResponseListener() {
+        @Override
+        public void setOnResponseListener(ResponseBin responseBin) {
+            if (responseBin != null && responseBin.getResponse() != null) {
+                String response = responseBin.getResponse();
+
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    String result = jsonObject.getString("result");
+
+                    if (result.equals("success")) {
+                        ToastUtils.showToast(getActivity(), "Added friend successfully", true);
+                    } else if (result.equals("isFriendAlready")) {
+                        ToastUtils.showToast(getActivity(), "Already a friend", false);
+                    }
+                } catch (JSONException error) {
+                    Toast.makeText(getActivity(), "Error occurred", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    };
 }

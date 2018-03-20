@@ -108,7 +108,11 @@ public class SummaryFragment extends Fragment implements AdapterView.OnItemClick
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        showDialogForSelectedFriend(adapter.getItem(position).getname(), adapter.getItem(position).getEmail());
+        if(!((TextView)view.findViewById(R.id.netAmount)).getText().toString().equals("You're\nsettled up")){
+            showDialogForSelectedFriend(adapter.getItem(position).getname(), adapter.getItem(position).getEmail());
+        }else{
+            ToastUtils.showToast(getActivity(), "You're already settled up!", true);
+        }
     }
 
     private void showDialogForSelectedFriend(String selectedFriend, final String selectedFriendEmail) {

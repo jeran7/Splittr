@@ -6,7 +6,7 @@
     <string name="action_settings">Settings</string>
 
     <!-- Strings for both login and register page -->
-    <string name="friendEmail">Email</string>
+    <string name="email">Email</string>
     <string name="passwordCharacters">********</string>
 
     <!-- Strings for login page -->
