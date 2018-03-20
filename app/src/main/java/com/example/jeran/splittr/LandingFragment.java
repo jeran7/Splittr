@@ -18,7 +18,7 @@ import android.view.ViewGroup;
 public class LandingFragment extends Fragment {
 
     private View landingView;
-    private MyFragmentPagerAdapter landingAdapter, activitiesAdapter;
+    private MyFragmentPagerAdapter landingAdapter, activitiesAdapter, chartAdapter;
     private ViewPager pager;
     private TabLayout tabs;
 
@@ -48,6 +48,9 @@ public class LandingFragment extends Fragment {
         activitiesAdapter = new MyFragmentPagerAdapter(getFragmentManager());
         pager.setAdapter(activitiesAdapter);
 
+        chartAdapter = new MyFragmentPagerAdapter(getFragmentManager());
+        pager.setAdapter(chartAdapter);
+
         tabs.setupWithViewPager(pager);
     }
 
@@ -72,6 +75,10 @@ public class LandingFragment extends Fragment {
                 case 1:
                     fragment = ActivitiesFragment.newInstance();
                     break;
+                case 2:
+                    fragment = ChartFragment.newInstance();
+                    break;
+
             }
             return fragment;
         }
@@ -87,6 +94,9 @@ public class LandingFragment extends Fragment {
                 case 1:
                     title = "Activities";
                     break;
+                case 2:
+                    title = "Dashboard";
+                    break;
             }
 
             return title;
@@ -95,7 +105,7 @@ public class LandingFragment extends Fragment {
         @Override
         public int getCount() {
             // TODO Auto-generated method stub
-            return 2;
+            return 3;
         }
 
         public int getItemPosition(Object object) {

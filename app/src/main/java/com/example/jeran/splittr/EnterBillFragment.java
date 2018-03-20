@@ -23,12 +23,14 @@ import com.example.jeran.splittr.helper.ResponseListener;
 import com.example.jeran.splittr.helper.ToastUtils;
 import com.example.jeran.splittr.helper.UsersDataModel;
 import com.example.jeran.splittr.helper.UsersListViewAdapter;
+import com.example.jeran.splittr.helper.UtilityMethods;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class EnterBillFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener {
 
@@ -40,6 +42,8 @@ public class EnterBillFragment extends Fragment implements View.OnClickListener,
     private View view;
     private ArrayList<UsersDataModel> friendsDataModels;
     private UsersListViewAdapter adapter;
+    private String itemName = "", itemCost = "";
+    private HashMap<String, Double> capturedItems;
 
 
     public EnterBillFragment() {
@@ -63,6 +67,13 @@ public class EnterBillFragment extends Fragment implements View.OnClickListener,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_enter_bill, container, false);
+
+        Bundle args = this.getArguments();
+        if (args != null) {
+            itemName = args.getString("itemName");
+            itemCost = args.getString("itemCost");
+            capturedItems = (HashMap<String, Double>) args.getSerializable("capturedItems");
+        }
         findViewsById();
         setUpListView();
         loadFriends();
@@ -71,6 +82,8 @@ public class EnterBillFragment extends Fragment implements View.OnClickListener,
     }
 
     private void setUpListView() {
+        billTitle.setText(itemName);
+        billAmount.setText(itemCost);
         checkedEmails = new ArrayList<>();
         friendsDataModels = new ArrayList<>();
         adapter = new UsersListViewAdapter(friendsDataModels, getActivity(), 2);
@@ -211,7 +224,24 @@ public class EnterBillFragment extends Fragment implements View.OnClickListener,
 
                     if (result.equals("success")) {
                         ToastUtils.showToast(getActivity(), "'" + billTitle.getText().toString().trim() + "' splitted successfully", true);
-                        startActivity(new Intent(getActivity(), LandingActivity.class));
+
+                        if (capturedItems != null) {
+                            capturedItems.remove(itemName);
+                            if (!capturedItems.isEmpty()) {
+                                CapturedItemsFragment capturedItemsFragment = CapturedItemsFragment.newInstance();
+                                Bundle args = new Bundle();
+                                args.putSerializable("capturedItems", capturedItems);
+                                capturedItemsFragment.setArguments(args);
+
+                                UtilityMethods.insertFragment(capturedItemsFragment, R.id.content_frame, getActivity());
+                            } else {
+                                ToastUtils.showToast(getActivity(), "Succesfully added all items from the bill", true);
+                                startActivity(new Intent(getActivity(), LandingActivity.class));
+                            }
+                        } else {
+                            startActivity(new Intent(getActivity(), LandingActivity.class));
+                        }
+
                     } else if (result.equals("failed")) {
                         ToastUtils.showToast(getActivity(), "Error splitting the item", false);
                     }

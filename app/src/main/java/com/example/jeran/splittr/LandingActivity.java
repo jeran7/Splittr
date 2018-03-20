@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -67,8 +66,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static java.lang.Double.parseDouble;
-
 
 /* This is the activity where the users can see his expense. */
 
@@ -90,7 +87,6 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
     private static final int GALLERY_IMAGE_REQUEST = 1;
     public static final int CAMERA_PERMISSIONS_REQUEST = 2;
     public static final int CAMERA_IMAGE_REQUEST = 3;
-    private static final String TAG = LandingActivity.class.getSimpleName();
     private static final String CLOUD_VISION_API_KEY = "AIzaSyA_ABH_tP7LaRF8UvSM-cj0voEFWDPh4Zk";
     public static final String FILE_NAME = "temp.jpg";
     private static final String ANDROID_CERT_HEADER = "X-Android-Cert";
@@ -347,11 +343,7 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
                 .setNegativeButton("No", dialogClickListener).show();
     }
 
-
     // Code for the Image capture and  Processing starts here
-
-    //
-
 
     public void startGalleryChooser() {
         if (PermissionUtils.requestPermission(this, GALLERY_PERMISSIONS_REQUEST, android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
@@ -381,7 +373,6 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
         File dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         return new File(dir, FILE_NAME);
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -426,15 +417,14 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
                 //mMainImage.setImageBitmap(bitmap);
 
             } catch (IOException e) {
-                Log.d(TAG, "Image picking failed because " + e.getMessage());
+                Log.d("Splittr", "Image picking failed because " + e.getMessage());
                 Toast.makeText(this, R.string.image_picker_error, Toast.LENGTH_LONG).show();
             }
         } else {
-            Log.d(TAG, "Image picker gave us a null image.");
+            Log.d("Splittr", "Image picker gave us a null image.");
             Toast.makeText(this, R.string.image_picker_error, Toast.LENGTH_LONG).show();
         }
     }
-
 
     private void callCloudVision(final Bitmap bitmap) throws IOException {
         // Switch text to loading
@@ -513,15 +503,23 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
                             vision.images().annotate(batchAnnotateImagesRequest);
                     // Due to a bug: requests to Vision API containing large images fail when GZipped.
                     annotateRequest.setDisableGZipContent(true);
-                    Log.d(TAG, "created Cloud Vision request object, sending request");
+                    Log.d("Splittr", "created Cloud Vision request object, sending request");
 
                     BatchAnnotateImagesResponse response = annotateRequest.execute();
-                    return convertResponseToString(response);
+
+                    CapturedItemsFragment capturedItemsFragment = CapturedItemsFragment.newInstance();
+                    Bundle args = new Bundle();
+                    args.putSerializable("capturedItems", convertToHashMap(response));
+                    capturedItemsFragment.setArguments(args);
+
+                    fabMenu.close(true);
+                    fabMenu.setVisibility(View.GONE);
+                    UtilityMethods.insertFragment(capturedItemsFragment, R.id.content_frame, LandingActivity.this);
 
                 } catch (GoogleJsonResponseException e) {
-                    Log.d(TAG, "failed to make API request because " + e.getContent());
+                    Log.d("Splittr", "failed to make API request because " + e.getContent());
                 } catch (IOException e) {
-                    Log.d(TAG, "failed to make API request because of other IOException " +
+                    Log.d("Splittr", "failed to make API request because of other IOException " +
                             e.getMessage());
                 }
                 return "Cloud Vision API request failed. Check logs for details.";
@@ -555,82 +553,74 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
         return Bitmap.createScaledBitmap(bitmap, resizedWidth, resizedHeight, false);
     }
 
-    private String convertResponseToString(BatchAnnotateImagesResponse response) {
+    private HashMap<String, Double> convertToHashMap(BatchAnnotateImagesResponse response) {
         int counter = 0;
 
         String message = "I found these things:\n\n";
         boolean itemStartingPoint = false;
         boolean priceStartingPoint = false;
-        HashMap<String,Double> itemsMap = new HashMap<String, Double>();
+        HashMap<String, Double> itemsMap = new HashMap<String, Double>();
         List<EntityAnnotation> texts = response.getResponses().get(0).getTextAnnotations();
         ArrayList<String> itemsList = new ArrayList<String>();
         if (texts != null) {
             for (EntityAnnotation text : texts) {
 
-
                 String input = text.getDescription().trim();
                 String lines[] = input.split("\\r?\\n");
-               // Log.e(TAG,input.trim());
-              //  Log.e(TAG, Integer.toString(lines.length));
-              for(String line : lines){
-                  String currentLine = line.trim();
-                  if(currentLine.startsWith("Cashier:")){
-                      Log.e(TAG,currentLine);
-                      Log.e(TAG, Integer.toString(currentLine.length()));
-                      itemStartingPoint = true;
-                      continue;
-                  }
-                  if(itemStartingPoint && currentLine.length() <= 4){
-                      Log.e(TAG,currentLine);
-                      Log.e(TAG, Integer.toString(currentLine.length()));
-                      itemStartingPoint = false;
-                      priceStartingPoint = true;
-                  }
-                  if(counter >= itemsList.size()){
-                      priceStartingPoint = false;
-                  }
-                  if(priceStartingPoint && currentLine.length() <= 4 && counter < itemsList.size()){
-                      Log.e(TAG,currentLine);
-                      Log.e(TAG, Integer.toString(currentLine.length()));
-                      Double cost =  Double.parseDouble(currentLine.trim());
-                      Log.e(TAG,itemsList.get(counter));
-                      Log.e(TAG,cost.toString());
-                      if(cost <= 0.0){
-                          counter++;
-                          continue;
-                      }
-                      itemsMap.put(itemsList.get(counter++),cost);
+                // Log.e(TAG,input.trim());
+                //  Log.e(TAG, Integer.toString(lines.length));
+                for (String line : lines) {
+                    String currentLine = line.trim();
+                    if (currentLine.startsWith("Cashier:")) {
+                        Log.d("Splittr", currentLine);
+                        Log.d("Splittr", Integer.toString(currentLine.length()));
+                        itemStartingPoint = true;
+                        continue;
+                    }
+                    if (itemStartingPoint && currentLine.length() <= 4) {
+                        Log.d("Splittr", currentLine);
+                        Log.d("Splittr", Integer.toString(currentLine.length()));
+                        itemStartingPoint = false;
+                        priceStartingPoint = true;
+                    }
+                    if (counter >= itemsList.size()) {
+                        priceStartingPoint = false;
+                    }
+                    if (priceStartingPoint && currentLine.length() <= 4 && counter < itemsList.size()) {
+                        Log.d("Splittr", currentLine);
+                        Log.d("Splittr", Integer.toString(currentLine.length()));
+                        Double cost = Double.parseDouble(currentLine.trim());
+                        Log.d("Splittr", itemsList.get(counter));
+                        Log.d("Splittr", cost.toString());
+                        if (cost <= 0.0) {
+                            counter++;
+                            continue;
+                        }
+                        itemsMap.put(itemsList.get(counter++), cost);
 
-                      Log.e(TAG,"Counter Size -->"+counter+" Itemlist size " +itemsList.size());
+                        Log.d("Splittr", "Counter Size -->" + counter + " Itemlist size " + itemsList.size());
+                    }
 
-                  }
-                  if(itemStartingPoint && input.length() > 5){
-                      Log.e(TAG,currentLine);
-                      Log.e(TAG, Integer.toString(currentLine.length()));
-                      String item = currentLine.substring(2,currentLine.length());
-                      itemsList.add(item);
-                      Log.e(TAG,"Added ---> "+item);
-                      //itemsMap.put(item,0.0);
-
-
-                  }
-
-              }
-                for (String itm: itemsMap.keySet()){
-
-                    String key =itm.toString();
+                    if (itemStartingPoint && input.length() > 5) {
+                        Log.d("Splittr", currentLine);
+                        Log.d("Splittr", Integer.toString(currentLine.length()));
+                        String item = currentLine.substring(2, currentLine.length());
+                        itemsList.add(item);
+                        Log.d("Splittr", "Added ---> " + item);
+                        //itemsMap.put(item,0.0);
+                    }
+                }
+                for (String itm : itemsMap.keySet()) {
+                    String key = itm.toString();
                     String value = itemsMap.get(itm).toString();
-                    Log.e(TAG,key + " ===== " + value);
-
-
+                    Log.d("Splittr", key + " ===== " + value);
                 }
 
-                return message;
+                return itemsMap;
             }
 
 
-
         }
-        return message;
+        return itemsMap;
     }
 }

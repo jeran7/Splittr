@@ -119,7 +119,7 @@ public class UtilityMethods {
         long diff = now - date.getTime();  //now you have a date interval representing with milliseconds.
         diff /= 1000;
 
-        Log.d("Splittr", "Now ("+now+") - Then ("+date.getTime()+" = Diff ("+diff+")");
+//        Log.d("Splittr", "Now ("+now+") - Then ("+date.getTime()+") = Diff ("+diff+")");
 
         if (diff < 60) { // less then minute
             timeAgo = ((int) diff) + "s";
