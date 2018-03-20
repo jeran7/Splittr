@@ -39,5 +39,9 @@
     <string name="doneSplitting">Split</string>
     <string name="default_notification_channel_id">default notification channel</string>
     <string name="GCM_TOKEN">GCM Token</string>
+    <string name="dialog_select_prompt">Choose a picture</string>
+    <string name="dialog_select_camera">Camera</string>
+    <string name="dialog_select_gallery">Gallery</string>
 
+    <string name="image_picker_error">Something is wrong with that image. Pick a different one please.</string>
 </resources>

@@ -3,7 +3,7 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#ff4081</color>
-
+    <color name="iron">#CCCCCC</color>
     <color name="splittrBlue">#2196F3</color>
     <color name="splittrTopGreen">#3b873b</color>
     <color name="splittrGreen">#4EAA3B</color>
