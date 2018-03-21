@@ -16,6 +16,7 @@ import com.example.jeran.splittr.helper.LinkUtils;
 import com.example.jeran.splittr.helper.ResponseBin;
 import com.example.jeran.splittr.helper.ResponseListener;
 import com.example.jeran.splittr.helper.ToastUtils;
+import com.example.jeran.splittr.helper.UtilityMethods;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -102,7 +103,7 @@ public class ActivitiesFragment extends Fragment {
                         HashMap<String, String> hashMap = new HashMap<>();
                         hashMap.put("title", title);
                         hashMap.put("subTitle", subTitle);
-//                        hashMap.put("time", UtilityMethods.getTimeAgo(time)+" ago");
+                        hashMap.put("time", UtilityMethods.getTimeAgo(time)+" ago");
                         activitiesList.add(hashMap);
                     }
 

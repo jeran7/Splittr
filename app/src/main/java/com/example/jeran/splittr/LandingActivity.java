@@ -512,8 +512,8 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
                     args.putSerializable("capturedItems", convertToHashMap(response));
                     capturedItemsFragment.setArguments(args);
 
-                    fabMenu.close(true);
-                    fabMenu.setVisibility(View.GONE);
+//                    fabMenu.close(true);
+//                    fabMenu.setVisibility(View.GONE);
                     UtilityMethods.insertFragment(capturedItemsFragment, R.id.content_frame, LandingActivity.this);
 
                 } catch (GoogleJsonResponseException e) {

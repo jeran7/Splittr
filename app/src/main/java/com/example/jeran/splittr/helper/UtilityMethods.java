@@ -10,8 +10,8 @@ import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
@@ -108,7 +108,6 @@ public class UtilityMethods {
 
     public static String getTimeAgo(String time) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");  //format for string to date conversion
-        formatter.setTimeZone(TimeZone.getTimeZone("America/Los_Angeles"));
         Date date = null;   //string to date convert
         try {
             date = formatter.parse(time);
@@ -118,10 +117,9 @@ public class UtilityMethods {
 
         String timeAgo = null;
         long now = new Date().getTime();
-        long diff = now - date.getTime();  //now you have a date interval representing with milliseconds.
+        long then = date.getTime() + Calendar.getInstance().getTimeZone().getOffset(date.getTime());
+        long diff = now - then;  //now you have a date interval representing with milliseconds.
         diff /= 1000;
-
-        Log.d("Splittr", "Now ("+now+") - Then ("+date.getTime()+") = Diff ("+diff+")");
 
         if (diff < 60) { // less then minute
             timeAgo = ((int) diff) + "s";
