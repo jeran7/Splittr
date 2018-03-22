@@ -113,8 +113,8 @@ public class ChartFragment extends Fragment {
 
     private void setupPieChart1(double totalOwed, double totalLented) {
         ArrayList<PieEntry> entries = new ArrayList<>();
-        entries.add(new PieEntry((float) totalOwed, "Lented", 0));
-        entries.add(new PieEntry((float) totalLented, "Owed", 1));
+        entries.add(new PieEntry((float) totalOwed, "Owed", 0));
+        entries.add(new PieEntry((float) totalLented, "Lented", 1));
 
         PieDataSet dataset = new PieDataSet(entries, "Amount in $");
         dataset.setValueTextSize(25.0f);
@@ -124,7 +124,7 @@ public class ChartFragment extends Fragment {
         dataset.setColors(ColorTemplate.MATERIAL_COLORS);
 
         PieData data = new PieData(dataset);
-        pieChart1Title.setText("TOTAL OWED/LENTED FOR "+LandingActivity.name.toUpperCase());
+        pieChart1Title.setText("TOTAL OWE/LENT FOR "+LandingActivity.name.toUpperCase());
         pieChart1.setData(data);
         pieChart1.animateY(1000);
     }

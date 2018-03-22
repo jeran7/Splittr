@@ -181,14 +181,16 @@ public class SummaryFragment extends Fragment implements AdapterView.OnItemClick
 
                         DecimalFormat df = new DecimalFormat("#.##");
                         df.setRoundingMode(RoundingMode.CEILING);
-                        if (netBalance < 0) {
-                            currentUserBalance.setTextColor(getResources().getColor(R.color.owes));
-                            currentUserBalance.setText("You owe\n$" + df.format(Math.abs(netBalance)));
-                        } else if (netBalance > 0) {
-                            currentUserBalance.setText("You lent\n$" + df.format(Math.abs(netBalance)));
-                        } else {
+                        if(netBalance==0){
                             currentUserBalance.setTextColor(getResources().getColor(R.color.gray));
                             currentUserBalance.setText("You're\nsettled up");
+                        }else{
+                            if(netBalance>0){
+                                currentUserBalance.setText("Balance\n+$" + df.format(netBalance));
+                            }else{
+                                currentUserBalance.setTextColor(getResources().getColor(R.color.owes));
+                                currentUserBalance.setText("Balance\n-$" + df.format(Math.abs(netBalance)));
+                            }
                         }
                     } else if (result.equals("failed")) {
                         ToastUtils.showToast(getActivity(), "Couldn't retrieve summary", false);
